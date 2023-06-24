@@ -1,0 +1,54 @@
+﻿@model Tarea
+@{
+    ViewData["Title"] = "Detalles de Tarea";
+}
+
+
+<div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                    Detalles de la Tarea: @Model.Nombre
+                </h1>
+            </div>
+            <div class="form-registro">
+                <div class="left-side">
+                    <h3>Nombre de la tarea:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Nombre" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Tarea asignada a Proyecto:</h3>
+                <div class="group-agregar">
+                    <input type="text" class="input-text" asp-controller="Proyecto" asp-action="Details" asp-route-id="@Model.ProyectoId" value="@Model.Proyecto.Nombre" readonly>
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                </div>
+                    <h3>Estado de la tarea:</h3>
+                <div class="group-agregar">
+                    <input type="text" class="input-text" asp-controller="Estado" asp-action="Details" asp-route-id="@Model.EstadoId" value="@Model.Estado.NombreEstado" readonly>
+                    <span class="highlight"></span>
+                    <span class="bar"></span>
+                </div>
+                    <h3>Tarea asignada a los usuarios:</h3>
+                    @foreach (var usuario in Model.TareasUsuarios)
+                    {
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-controller="Usuario" asp-action="Details" asp-route-id="@usuario.UsuarioId" value="@usuario.Usuario.FullName" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    }
+                </div>
+            <div class="right-side">
+                    <h3>Descripción de la tarea:</h3>
+                    <textarea class="textarea-proy" asp-for="Descripcion" readonly></textarea>
+                    <div class="separacion">
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

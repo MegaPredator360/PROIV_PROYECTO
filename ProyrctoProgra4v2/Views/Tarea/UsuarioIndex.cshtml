@@ -1,0 +1,62 @@
+﻿@model ICollection<TareaUsuarioLista>
+@{
+    ViewData["Title"] = "Lista de Tareas";
+}
+
+<div class="container">
+    <div class="title-index">
+        <h1>
+            Lista de Tareas
+        </h1>
+    </div>
+    <div class="contenido">
+        <form asp-action="UsuarioIndex" method="get">
+            <div class="group-buscar2">
+                <input type="text" class="input-text" name="SearchString" value="@ViewData["CurrentSearch"]" required>
+                <span class="bar"></span>
+                <label class="label-text">Buscar</label>
+            </div>
+            <div class="align-right2">
+                <div class="select">
+                    <select name="SearchBy">
+                        <option value="Nombre">Nombre</option>
+                        <option value="Proyecto">Proyecto</option>
+                        <option value="Estado">Estado</option>
+                    </select>
+                </div>
+                <button class="custom-btn btn-info btn-margin1" type="submit">Buscar</button>
+                <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="UsuarioIndex" asp-post="">Ver Lista Completa</a>
+            </div>
+        </form>
+        <br /><br /><br /><br /><br />
+        @if (Model.Count == 0)
+        {
+            <div class="title-index">
+                <h1>
+                    No hay tareas registradas
+                </h1>
+            </div>
+        }
+        else
+        {
+            <table class="table-proy">
+                <tr>
+                    <th class="th-proy">Nombre</th>
+                    <th class="th-proy">Proyecto Perteneciente</th>
+                    <th class="th-proy">Estado</th>
+                </tr>
+                @foreach (var tarea in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => tarea.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.NombreProyecto)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.NombreEstado)</td>
+                        <td class="td-opciones3">
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="UsuarioDetails" asp-route-id="@tarea.Id">Detalles</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>

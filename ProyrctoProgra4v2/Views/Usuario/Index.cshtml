@@ -1,0 +1,68 @@
+﻿@model ICollection<UsuarioLista>
+@{
+    ViewData["Title"] = "Lista de Usuarios";
+}
+
+<div class="container">
+    <div class="title-index">
+        <h1>
+            Lista de Usuarios
+        </h1>
+    </div>
+    <div class="contenido">
+        <form asp-action="Index" method="get">
+            <div class="group-buscar">
+                <input type="text" class="input-text" name="SearchString" value="@ViewData["CurrentSearch"]" required>
+                <span class="bar"></span>
+                <label class="label-text">Buscar</label>
+            </div>
+            <div class="align-right">
+                <div class="select">
+                    <select name="SearchBy">
+                        <option value="Cedula">Cedula</option>
+                        <option value="Nombre">Nombre</option>
+                        <option value="Permisos">Permisos</option>
+                    </select>
+                </div>
+                <button class="custom-btn btn-info btn-margin1" type="submit">Buscar</button>
+                <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index" asp-post="">Ver Lista Completa</a>
+                <a class="custom-btn btn-accept btn-margin1" type="submit" asp-action="Registrar">Registrar</a>
+            </div>
+        </form>
+        <br /><br /><br /><br /><br />
+        @if (Model.Count == 0)
+        {
+            <div class="title-index">
+                <h1>
+                    No hay usuarios registrados
+                </h1>
+            </div>
+        }
+        else
+        {
+            <table class="table-proy">
+                <tr>
+                    <th class="th-proy">Cedula</th>
+                    <th class="th-proy">Nombre</th>
+                    <th class="th-proy">Correo</th>
+                    <th class="th-proy">Usuario</th>
+                    <th class="th-proy">Permisos</th>
+                </tr>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem=>user.IdNumber)</td>
+                        <td>@Html.DisplayFor(modelItem=>user.FullName)</td>
+                        <td>@Html.DisplayFor(modelItem=>user.Email)</td>
+                        <td>@Html.DisplayFor(modelItem=>user.UserName)</td>
+                        <td>@Html.DisplayFor(modelItem=>user.Role)</td>
+                        <td class="td-opciones2">
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Actualizar" asp-route-id="@user.Id">Editar</a>
+                            <a class="custom-btn btn-danger btn-margin2" type="submit" asp-action="Borrar" asp-route-id="@user.Id">Borrar</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>

@@ -1,0 +1,83 @@
+﻿@model IList<ProyectoDetalle>
+@{
+    ViewData["Title"] = "Detalles del Proyecto";
+}
+@Html.HiddenFor(model => model[0].Id)
+    <div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                Detalles de Proyecto: @Html.DisplayNameFor(model => model[0].Nombre)
+                </h1>
+            </div>
+            <div class="form-registro">
+                <div class="left-side">
+                    <h3>Nombre del Proyecto:</h3>
+                    <div class="group-agregar">
+                    @Html.EditorFor(model => model[0].Nombre, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Fecha de Inicio:</h3>
+                    <div class="group-agregar">
+                    @Html.EditorFor(model => model[0].FechaInicio, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Estado:</h3>
+                    <div class="group-agregar">
+                    @Html.EditorFor(model => model[0].ProyectoEstado, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <h3>Descripcion:</h3>
+                @Html.TextAreaFor(model => model[0].Descripcion, new {@class = "textarea-proy2", @readonly = "readonly"})
+                <div class="separacion">
+                    <a class="custom-btn btn-accept btn-margin1" type="submit" asp-controller="Tarea" asp-action="Create">Asignar tarea</a>
+                    <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a>
+                </div>
+                </div>
+            </div>
+        @if (Model.Count == 0)
+        {
+            <br/>
+            <div class="title-index">
+                <h1>
+                    No hay tareas asignadas al proyecto
+                </h1>
+            </div>
+        }
+        else
+        {
+            <br />
+            <div class="title-index">
+                <h1>
+                    Tareas Asignadas
+                </h1>
+            </div>
+            <br />
+            <table class="table-detail">
+                <tr>
+                    <th class="th-proy">Nombre</th>
+                    <th class="th-proy">Estado</th>
+                    <th class="th-proy">Personas Asignadas</th>
+                </tr>
+                @foreach (var tarea in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => tarea.TareaNombre)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.TareaEstado)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.PersonasAsignadas)</td>
+                        <td class="td-opciones">
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-controller="Tarea" asp-action="Update" asp-route-id="@tarea.IdTarea">Editar</a>
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-controller="Tarea" asp-action="Details" asp-route-id="@tarea.IdTarea">Detalles</a>
+                            <a class="custom-btn btn-danger btn-margin2" type="submit" asp-controller="Tarea" asp-action="Delete" asp-route-id="@tarea.IdTarea">Borrar</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+        </div>
+    </div>

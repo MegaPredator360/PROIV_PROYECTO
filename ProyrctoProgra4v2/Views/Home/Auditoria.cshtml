@@ -1,0 +1,114 @@
+﻿@model ICollection<Tarea>
+@{
+    ViewData["Title"] = "Auditoria";
+}
+
+<div class="container">
+    <div class="contenido">
+        <div class="title-index">
+            <h1>
+                Auditoria
+            </h1>
+        </div>
+        <div class="form-filtrar">
+            <div class="title-index">
+                <h2>
+                    Filtrar resultados por:
+                </h2>
+            </div>
+            <form asp-action="Auditoria" method="get">
+                <div class="select-opciones">
+                    <div class="select-opcion1">
+                        <h3>Proyecto:</h3>
+                        <div class="select-filtrar">
+                            <select asp-items="ViewBag.Proyectos" name="ProyectoId">
+                                <option value="0">-----------------</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="select-opcion1">
+                        <h3>Tarea:</h3>
+                        <div class="select-filtrar">
+                            <select asp-items="ViewBag.Tareas" name="TareaId">
+                                <option value="0">-----------------</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="select-opcion1">
+                        <h3>Estado:</h3>
+                        <div class="select-filtrar">
+                            <select asp-items="ViewBag.Estados" name="EstadoId">
+                                <option value="0">-----------------</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="select-opcion1">
+                        <h3>Usuario Asignado:</h3>
+                        <div class="select-filtrar">
+                            <select asp-items="ViewBag.Usuarios" name="UsuarioId">
+                                <option value="0">-----------------</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="select-opcion2">
+                        <button class="custom-btn btn-info btn-margin1" type="submit">Filtrar</button>
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Inicio</a>
+                    </div>
+                </div>
+            </form>
+            @if (Model.Count == 0)
+            {
+                <div class="title-index">
+                    <h1>
+                        No se han encontrado registros
+                    </h1>
+                </div>
+            }
+            else
+            {
+                @foreach (var tarea in Model)
+                {
+                    <div class="form-infoTarea">
+                        <div class="auditoria-info">
+                            <div class="left-side2">
+                                <h3>Nombre del proyecto:</h3>
+                                <div class="group-auditoria">
+                                    @Html.EditorFor(modelItem => tarea.Proyecto.Nombre, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <h3>Nombre de Tarea:</h3>
+                                <div class="group-auditoria">
+                                    @Html.EditorFor(modelItem => tarea.Nombre, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <h3>Estado de la tarea:</h3>
+                                <div class="group-auditoria">
+                                    @Html.EditorFor(modelItem => tarea.Estado.NombreEstado, new { htmlAttributes = new { @class = "input-text", @readonly = "readonly" }})
+                                    <span class="highlight"></span>
+                                    <span class="bar"></span>
+                                </div>
+                                <h3>Tarea asignada a los usuarios:</h3>
+                                @foreach (var usuario in tarea.TareasUsuarios)
+                                {
+                                    <div class="group-auditoria">
+                                        <input type="text" class="input-text" asp-controller="Usuario" asp-action="Details" asp-route-id="@usuario.UsuarioId" value="@usuario.Usuario.FullName" readonly>
+                                        <span class="highlight"></span>
+                                        <span class="bar"></span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="right-side2">
+                                <h3>Descripción del proyecto:</h3>
+                                @Html.TextAreaFor(modelItem => tarea.Proyecto.Descripcion, new {@class = "textarea-proy2", @readonly = "readonly"})
+                                <h3>Descripción de la tarea:</h3>
+                                @Html.TextAreaFor(modelItem => tarea.Descripcion, new {@class = "textarea-proy2", @readonly = "readonly"})
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

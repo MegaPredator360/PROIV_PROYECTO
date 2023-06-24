@@ -1,0 +1,47 @@
+﻿@model ProyectoNew
+@{
+    ViewData["Title"] = "Actualizar Proyecto";
+}
+
+<form asp-action="Update" method="post">
+    <div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                    Actualizar Proyecto
+                </h1>
+            </div>
+            <div class="form-registro">
+                <div class="left-side">
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                    <h3>Nombre del Proyecto:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Nombre">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <span asp-validation-for="FechaInicio" class="text-danger"></span>
+                    <h3>Fecha de Inicio:</h3>
+                    <div class="group-agregar">
+                        <input type="date" class="input-text" asp-for="FechaInicio">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Estado:</h3>
+                    <div class="select-estado">
+                        <select asp-for="EstadoId" asp-items="ViewBag.Estados"></select>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    <h3>Descripción del proyecto:</h3>
+                    <textarea class="textarea-proy2" asp-for="Descripcion"></textarea>
+                    <div class="separacion">
+                        <button class="custom-btn btn-accept btn-margin1" type="submit">Actualizar Proyecto</button>
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,50 @@
+﻿@model TareaNew
+@{
+    ViewData["Title"] = "Asignar Tarea";
+}
+
+<form asp-action="Create" method="post">
+    <div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                    Asignar Tarea
+                </h1>
+            </div>
+            <div class="form-registro form-registro6">
+                <div class="left-side">
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                    <h3>Nombre de la tarea:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Nombre">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <span asp-validation-for="ProyectoId" class="text-danger"></span>
+                    <h3>Proyecto a asignar Tarea:</h3>
+                    <div class="select-estado">
+                        <select asp-for="ProyectoId" asp-items="ViewBag.Proyectos"></select>
+                    </div>
+                    <h3>Estado:</h3>
+                    <div class="select-estado">
+                        <select asp-for="EstadoId" asp-items="ViewBag.Estados"></select>
+                    </div>
+                    <span asp-validation-for="UserIds" class="text-danger"></span>
+                    <h3>Usuarios a asginar Tarea:</h3>
+                    <div class="select-estado">
+                        <select asp-for="UserIds" asp-items="ViewBag.Usuarios" multiple></select>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                    <h3>Descripción de la tarea:</h3>
+                    <textarea class="textarea-proy" asp-for="Descripcion"></textarea>
+                    <div class="separacion">
+                        <button class="custom-btn btn-accept btn-margin1" type="submit">Asignar Tarea</button>
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

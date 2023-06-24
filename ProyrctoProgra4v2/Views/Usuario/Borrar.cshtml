@@ -1,0 +1,70 @@
+﻿@model UsuarioActualizar
+@{
+    ViewData["Title"] = "Borrar Usuario";
+}
+
+<form asp-action="BorrarUsuario" method="post">
+    @Html.HiddenFor(h => @Model.Id)
+    <div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                    Borrar Usuario: @Model.FullName
+                </h1>
+            </div>
+            <br/>
+            <div class="adventencia-borrar">
+                <h2>¿Estás seguro de borrar a este usuario?</h2>
+                <h2>Una vez borrado, el usuario no tendrá acceso a la aplicación</h2>
+            </div>
+            <div class="form-registro">
+                <div class="left-side">
+                    <h3>Número de cedula:</h3>
+                    <span class="text-danger" asp-validation-for="IdNumber"></span>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="IdNumber" pattern="[0-9.]+" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Correo Electronico:</h3>
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Email" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Permisos:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Role" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <h3>Nombre Completo:</h3>
+                    <span class="text-danger" asp-validation-for="FullName"></span>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="FullName" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Nombre de Usuario:</h3>
+                    <span class="text-danger" asp-validation-for="UserName"></span>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="UserName" readonly>
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <div class="title-index">
+                        <button class="custom-btn btn-danger btn-margin1" type="submit">Borrar Usuario</button>
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a><br />
+                        @if (TempData["msg"] != null)
+                        {
+                            <span class="text-info">@TempData["msg"]</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

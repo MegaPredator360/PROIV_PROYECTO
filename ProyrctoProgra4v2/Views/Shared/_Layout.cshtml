@@ -1,0 +1,75 @@
+﻿@{
+    string username = User.Identity!.Name!;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - El Sindicato</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@200&family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet"> @*Fuente de letra*@
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.4/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+ @RenderBody()
+    @if (!string.IsNullOrEmpty(User.Identity!.Name))
+    {
+        <div class="overlap" id="menuHeader">
+            <input type="checkbox" id="check">
+            <label for="check">
+                <i class="bi bi-three-dots-vertical" id="btn"></i>
+                <i class="bi bi-x-lg" id="cancel"></i>
+            </label>
+            <div class="sidebar">
+                <header>Menu</header>
+                <a asp-controller="Home" asp-action="Index" class="a-menu">
+                    <i class="bi bi-house"></i>
+                    <span>Inicio</span>
+                </a>
+                @if (User.IsInRole("Administrador") || User.IsInRole("Gestor"))
+                {
+                <a asp-controller="Proyecto" asp-action="Index" class="a-menu">
+                    <i class="bi bi-terminal"></i>
+                    <span>Proyectos</span>
+                </a>
+                <a asp-controller="Tarea" asp-action="Index" class="a-menu">
+                    <i class="bi bi-journal-code"></i>
+                    <span>Tareas</span>
+                </a>
+                }
+                @if (User.IsInRole("Usuario"))
+                {
+                    <a asp-controller="Tarea" asp-action="UsuarioIndex" class="a-menu">
+                        <i class="bi bi-journal-code"></i>
+                        <span>Tareas</span>
+                    </a>
+                }
+                @if (User.IsInRole("Administrador"))
+                {
+                    <a asp-controller="Usuario" asp-action="Index" class="a-menu">
+                        <i class="bi bi-person"></i>
+                        <span>Usuario</span>
+                    </a>
+                }
+                <div class="signedinas">
+                    <label>Iniciado Como:</label><br />
+                    <label>@username</label>
+                </div>
+                <a asp-controller="Authentication" asp-action="ChangePassword" class="a-menu">
+                    <i class="bi bi-key"></i>
+                    <span>Contraseña</span>
+                </a>
+                <a asp-controller="Authentication" asp-action="Logout" class="a-menu">
+                    <i class="bi bi-door-open"></i>
+                    <span>Cerrar Sesion</span>
+                </a>
+            </div>
+        </div>
+    }
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

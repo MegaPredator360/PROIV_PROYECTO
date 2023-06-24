@@ -1,0 +1,63 @@
+﻿@model UsuarioActualizar
+@{
+    ViewData["Title"] = "Actualizar Usuario";
+}
+
+<form asp-action="Actualizar" method="post">
+    @Html.HiddenFor(modelItem => @Model.Id)
+    <div class="container">
+        <div class="contenido">
+            <div class="title-index">
+                <h1>
+                    Actualizar Usuario: @Model.FullName
+                </h1>
+            </div>
+            <div class="form-registro form-registro3">
+                <div class="left-side">
+                    <span class="text-danger" asp-validation-for="IdNumber"></span>
+                    <h3>Número de cedula:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="IdNumber">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                    <h3>Correo Electronico:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="Email">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <h3>Permisos:</h3>
+                    <div class="select-estado">
+                        <select asp-for="Role" class="form-control" asp-items="ViewBag.Roles"></select>
+                    </div>
+                </div>
+                <div class="right-side">
+                    <span class="text-danger" asp-validation-for="FullName"></span>
+                    <h3>Nombre Completo:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="FullName">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <span class="text-danger" asp-validation-for="UserName"></span>
+                    <h3>Nombre de Usuario:</h3>
+                    <div class="group-agregar">
+                        <input type="text" class="input-text" asp-for="UserName">
+                        <span class="highlight"></span>
+                        <span class="bar"></span>
+                    </div>
+                    <div class="title-index">
+                        <button class="custom-btn btn-accept btn-margin1" type="submit">Actualizar Usuario</button>
+                        <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index">Volver a la lista</a><br /><br /><br />
+                        @if (TempData["msg"] != null)
+                        {
+                            <span class="text-danger">@TempData["msg"]</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

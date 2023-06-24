@@ -1,0 +1,73 @@
+﻿@model ICollection<ProyectoLista>
+@{
+    ViewData["Title"] = "Lista de Proyectos";
+}
+
+<div class="container">
+    <div class="title-index">
+        <h1>
+            Lista de Proyectos
+        </h1>
+    </div>
+    <div class="contenido">
+        <form asp-action="Index" method="get">
+            <div class="group-buscar">
+                <input type="text" class="input-text" name="SearchString" value="@ViewData["CurrentSearch"]" required>
+                <span class="bar"></span>
+                <label class="label-text">Buscar</label>
+            </div>
+        <div class="align-right">
+            <div class="select">
+                <select name="SearchBy">
+                    <option value="Nombre">Nombre</option>
+                    <option value="Estado">Estado</option>
+                </select>
+            </div>
+                <button class="custom-btn btn-info btn-margin1" type="submit">Buscar</button>
+                <a class="custom-btn btn-info btn-margin1" type="submit" asp-action="Index" asp-post="">Ver Lista Completa</a>
+                <a class="custom-btn btn-accept btn-margin1" type="submit" asp-action="Create">Agregar</a>
+            </div>
+        </form>
+        <br /><br /><br /><br /><br />
+        @if (Model.Count == 0)
+        {
+            <div class="title-index">
+                <h1>
+                    No hay proyectos registrados
+                </h1>
+            </div>
+        }
+        else
+        {
+            <table class="table-proy">
+                <tr>
+                    <th class="th-proy">Nombre</th>
+                    <th class="th-proy">Fecha de Inicio</th>
+                    <th class="th-proy">Estado</th>
+                    <th class="th-proy">Tareas Asignadas</th>
+                </tr>
+                @foreach (var proyecto in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => proyecto.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => proyecto.FechaInicio)</td>
+                        <td>@Html.DisplayFor(modelItem => proyecto.NombreEstado)</td>
+                        <td>@Html.DisplayFor(modelItem => proyecto.TareasAsignadas)</td>
+                        <td class="td-opciones">
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Update" asp-route-id="@proyecto.Id">Editar</a>
+                            @if (proyecto.TareasAsignadas == 0)
+                            {
+                                <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Details" asp-route-id="@proyecto.Id">Detalles</a>
+                            }
+                            else
+                            {
+                                <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="DetailsTarea" asp-route-id="@proyecto.Id">Detalles</a>
+                            }
+                            <a class="custom-btn btn-danger btn-margin2" type="submit" asp-action="Delete" asp-route-id="@proyecto.Id">Borrar</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        }
+    </div>
+</div>
