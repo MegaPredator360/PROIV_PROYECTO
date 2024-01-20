@@ -44,7 +44,7 @@ public class TareaNew
     public int ProyectoId { get; set; }
 
     [Required(ErrorMessage = "Se necesitan asignar Usuarios a la tarea")]
-    public List<string> UserIds { get; set; }
+    public List<string>? UserIds { get; set; }
 }
 
 public class NewTareaDropdowns
