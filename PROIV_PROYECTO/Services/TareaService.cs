@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using ProyectoProgra4v2.Models;
-using ProyectoProgra4v2.Data.Services.Interface;
+using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.Interface;
 
-namespace ProyectoProgra4v2.Data.Services
+namespace PROIV_PROYECTO.Services
 {
     public class TareaService : ITareaService
     {

@@ -1,16 +1,20 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Contexts;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 
-namespace ProyectoProgra4v2.Data.Services
+namespace PROIV_PROYECTO.Services
 {
     public class AuditoriaService : IAuditoriaService
     {
-        private readonly MvcDbContext _context;
 
-        public AuditoriaService(MvcDbContext context)
+        // Creamos una variable que hará uso de contexto
+        private readonly ProjectsContext projectsContext;
+
+        // Constructor
+        public AuditoriaService(ProjectsContext _projectsContext)
         {
-            _context = context;
+            projectsContext = _projectsContext;
         }
 
         public async Task<NewAuditoriaDropdowns> GetNewAuditoriaDropdownsValues()

@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Contexts;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 using System.Threading;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace ProyectoProgra4v2.Data.Services
+namespace PROIV_PROYECTO.Services
 {
     public class UsuarioService : IUsuarioService
     {
         public readonly UserManager<ApplicationUser> _userManager;
         public readonly RoleManager<ApplicationRole> _roleManager;
         public readonly SignInManager<ApplicationUser> _signInManager;
-        public readonly ApplicationDbContext _context;
+        public readonly UserIdentityContext _context;
 
-        public UsuarioService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context)
+        public UsuarioService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, UserIdentityContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;

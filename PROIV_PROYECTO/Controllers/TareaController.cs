@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Identity;
-using ProyectoProgra4v2.Models;
-using ProyectoProgra4v2.Data.Services.Interface;
+using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
 
-namespace ProyectoProgra4.Controllers
+namespace PROIV_PROYECTO.Controllers
 {
     public class TareaController : Controller
     {

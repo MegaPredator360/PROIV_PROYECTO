@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Data;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Contexts;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 
-namespace ProyectoProgra4v2.Controllers
+namespace PROIV_PROYECTO.Controllers
 {
     [Authorize(Roles = "Administrador")]
     public class UsuarioController : Controller

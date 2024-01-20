@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProyectoProgra4v2.Models
+namespace PROIV_PROYECTO.Models
 {
     public class ApplicationUser : IdentityUser
     {

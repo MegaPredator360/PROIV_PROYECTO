@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Models;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ProyectoProgra4v2.Data
+namespace PROIV_PROYECTO.Contexts
 {
-    public class MvcDbContext : DbContext
+    public class ProjectsContext : DbContext
     {
-        public MvcDbContext(DbContextOptions<MvcDbContext> options) : base(options)
+        public ProjectsContext(DbContextOptions<ProjectsContext> options) : base(options)
         {
 
         }

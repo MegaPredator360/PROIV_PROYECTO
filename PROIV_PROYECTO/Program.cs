@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Data;
-using ProyectoProgra4v2.Data.Services;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Contexts;
+using PROIV_PROYECTO.Services;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<MvcDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// Se identifican los contextos a utilizar para la base de datos
+builder.Services.AddDbContext<UserIdentityContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ProjectsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Validar Identidad de Usuario
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddEntityFrameworkStores<UserIdentityContext>()
     .AddDefaultTokenProviders();
 
 // Add services to the container.

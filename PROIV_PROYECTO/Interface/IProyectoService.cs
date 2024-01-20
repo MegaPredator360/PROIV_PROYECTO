@@ -1,6 +1,6 @@
-﻿using ProyectoProgra4v2.Models;
+﻿using PROIV_PROYECTO.Models;
 
-namespace ProyectoProgra4v2.Data.Services.Interface
+namespace PROIV_PROYECTO.Interface
 {
     public interface IProyectoService
     {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace ProyectoProgra4v2.Models
+namespace PROIV_PROYECTO.Models
 {
     public class Login
     {

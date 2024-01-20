@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProyectoProgra4v2.Models;
-using ProyectoProgra4v2.Data.Services.Interface;
+using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
 
-namespace ProyectoProgra4v2.Controllers
+namespace PROIV_PROYECTO.Controllers
 {
     [Authorize(Roles = "Administrador,Gestor")]
     public class ProyectoController : Controller

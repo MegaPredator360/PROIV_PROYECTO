@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 using System.Security.Claims;
 
-namespace ProyectoProgra4v2.Data.Services
+namespace PROIV_PROYECTO.Services
 {
     public class AuthenticationService : IAuthenticationService
     {

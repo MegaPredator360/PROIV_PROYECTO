@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using ProyectoProgra4v2.Models;
-using ProyectoProgra4v2.Data.Services.Interface;
+using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.Interface;
 using System.Diagnostics;
 
-namespace ProyectoProgra4v2.Controllers
+namespace PROIV_PROYECTO.Controllers
 {
     public class HomeController : Controller
     {

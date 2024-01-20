@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
-namespace ProyectoProgra4v2.Models
+namespace PROIV_PROYECTO.Models
 {
 	public class Proyecto
 	{

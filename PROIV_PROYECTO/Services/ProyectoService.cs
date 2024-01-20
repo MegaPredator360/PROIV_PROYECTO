@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
-using ProyectoProgra4v2.Models;
-using ProyectoProgra4v2.Data.Services.Interface;
+using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace ProyectoProgra4v2.Data.Services
+namespace PROIV_PROYECTO.Services
 {
     public class ProyectoService : IProyectoService
     {

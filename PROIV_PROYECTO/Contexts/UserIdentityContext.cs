@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Models;
 using System.Data;
 using System.Reflection.Emit;
 using System.Threading;
 
-namespace ProyectoProgra4v2.Data
+namespace PROIV_PROYECTO.Contexts
 {
-    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string,
+    public class UserIdentityContext : IdentityDbContext<ApplicationUser, ApplicationRole, string,
         IdentityUserClaim<string>,  IdentityUserRole<string>, IdentityUserLogin<string>,
         IdentityRoleClaim<string>, IdentityUserToken<string>>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public UserIdentityContext(DbContextOptions<UserIdentityContext> options) : base(options)
         {
 
         }

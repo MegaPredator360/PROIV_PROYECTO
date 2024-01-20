@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoProgra4v2.Data.Services.Interface;
-using ProyectoProgra4v2.Models;
+using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.Models;
 
-namespace ProyectoProgra4v2.Controllers
+namespace PROIV_PROYECTO.Controllers
 {
     public class AuthenticationController : Controller
     {
