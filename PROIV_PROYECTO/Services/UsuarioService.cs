@@ -38,7 +38,7 @@ namespace PROIV_PROYECTO.Services
                         UserName = r.Key.UserName,
                         Email = r.Key.Email,
                         Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-                    }).Where(u => u.FullName.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                    }).Where(u => u.FullName!.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
                 
                 return result2;
             }
@@ -56,7 +56,7 @@ namespace PROIV_PROYECTO.Services
                         UserName = r.Key.UserName,
                         Email = r.Key.Email,
                         Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-                    }).Where(u => u.IdNumber.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                    }).Where(u => u.IdNumber!.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
                 
                 return result2;
             }
@@ -74,7 +74,7 @@ namespace PROIV_PROYECTO.Services
                         UserName = r.Key.UserName,
                         Email = r.Key.Email,
                         Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-                    }).Where(u => u.Role.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                    }).Where(u => u.Role!.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
                 
                 return result2;
             }
@@ -143,7 +143,7 @@ namespace PROIV_PROYECTO.Services
             var roleName = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
             // Se agregar el usuario y el rol en la tabla relacional AspNetUserRoles
-            if (await roleManager.RoleExistsAsync(roleName.Name!))
+            if (await roleManager.RoleExistsAsync(roleName!.Name!))
             {
                 await userManager.AddToRoleAsync(usuarioNuevo, roleName.Name!);
             }
@@ -171,7 +171,7 @@ namespace PROIV_PROYECTO.Services
                     Role = string.Join(",", r.Select(c => c.r.Id).ToArray())
                 }).FirstOrDefault(p => p.Id == _usuarioId);
 
-            return result2;
+            return result2!;
         }
 
         public UsuarioDTO ObtenerUsuarioBorrarId(string _usuarioId)
@@ -190,7 +190,7 @@ namespace PROIV_PROYECTO.Services
                     Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
                 }).FirstOrDefault(p => p.Id == _usuarioId);
 
-            return result2;
+            return result2!;
         }
 
         // Lista de Roles Registrados
@@ -217,15 +217,15 @@ namespace PROIV_PROYECTO.Services
 
             var permisoNombre = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
-            if (await roleManager.RoleExistsAsync(permisoNombre.Name!))
+            if (await roleManager.RoleExistsAsync(permisoNombre!.Name!))
             {
                 await userManager.AddToRoleAsync(usuarioEncontrado!, permisoNombre.Name!);
             }
 
-            usuarioEncontrado.Email = _usuarioDTO.Email;
-            usuarioEncontrado.NormalizedEmail = _usuarioDTO.Email.ToUpper();
+            usuarioEncontrado!.Email = _usuarioDTO.Email;
+            usuarioEncontrado.NormalizedEmail = _usuarioDTO.Email!.ToUpper();
             usuarioEncontrado.UserName = _usuarioDTO.UserName;
-            usuarioEncontrado.NormalizedUserName = _usuarioDTO.UserName.ToUpper();
+            usuarioEncontrado.NormalizedUserName = _usuarioDTO.UserName!.ToUpper();
             usuarioEncontrado.FullName = _usuarioDTO.FullName;
             usuarioEncontrado.IdNumber = _usuarioDTO.IdNumber;
             
@@ -235,10 +235,10 @@ namespace PROIV_PROYECTO.Services
 
         public async Task BorrarUsuario(UsuarioDTO _usuarioDTO)
         {
-            var usuarioEncontrado = await userManager.FindByIdAsync(_usuarioDTO.Id);
+            var usuarioEncontrado = await userManager.FindByIdAsync(_usuarioDTO.Id!);
             var permisoEncontrado = await userManager.GetRolesAsync(usuarioEncontrado!);
 
-            await userManager.RemoveFromRoleAsync(usuarioEncontrado, permisoEncontrado.FirstOrDefault());
+            await userManager.RemoveFromRoleAsync(usuarioEncontrado!, permisoEncontrado.FirstOrDefault()!);
             
             usuarioContext.Remove(usuarioEncontrado);
             usuarioContext.SaveChanges();

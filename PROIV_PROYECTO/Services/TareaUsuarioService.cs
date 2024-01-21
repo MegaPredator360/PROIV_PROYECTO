@@ -47,7 +47,7 @@ namespace PROIV_PROYECTO.Services
         {
             var tareaEncontrada = await proyectoContext.Tareas.FirstOrDefaultAsync(n => n.Id == _tareaDTO.Id);
 
-            tareaEncontrada.EstadoId = _tareaDTO.EstadoId;
+            tareaEncontrada!.EstadoId = _tareaDTO.EstadoId;
             await proyectoContext.SaveChangesAsync();
         }
 
