@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.ModelsDTO;
 using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
 
@@ -9,129 +9,139 @@ namespace PROIV_PROYECTO.Controllers
     [Authorize(Roles = "Administrador,Gestor")]
     public class ProyectoController : Controller
 	{
-        private readonly IProyectoService _service;
+        // -------- Constructor
+        private readonly IProyectoService proyectoService;
 
-        public ProyectoController(IProyectoService service)
+        public ProyectoController(IProyectoService _proyectoService)
         {
-            _service = service;
+            proyectoService = _proyectoService;
         }
 
-        public async Task<IActionResult> Index(string SearchBy, string SearchString)
+        // Carga de Index
+        public async Task<IActionResult> Index(string _filtrar, string _textoBusqueda)
         {
-            ViewData["CurrentSearch"] = SearchString;
-            var data = await _service.GetAllAsync(SearchBy, SearchString);
+            ViewData["CurrentSearch"] = _filtrar;
+
+            // Se utilizara para filtrar los datos
+            var data = await proyectoService.ObtenerProyectosAsync(_filtrar, _textoBusqueda);
             return View(data);
         }
 
         // Vista para Crear Proyectos
         public async Task<IActionResult> Create()
         {
-            var proyectoDropdownsData = await _service.GetNewProyectoDropdownsValues();
-            ViewBag.Estados = new SelectList(proyectoDropdownsData.Estados, "Id", "NombreEstado");
+            // Se obtienen la lista de estados
+            var proyectoDropdown = await proyectoService.ProyectoDropdownValues();
+
+            // Se muestran los nombres, pero se mandará al HTTP Post el Id del estado
+            ViewBag.Estados = new SelectList(proyectoDropdown.Estados, "Id", "NombreEstado");
 
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProyectoNew proyectoNew)
+        public async Task<IActionResult> Create(ProyectoDTO _proyectoDTO)
         {
             if (!ModelState.IsValid)
             {
-                var proyectoDropdownsData = await _service.GetNewProyectoDropdownsValues();
-                ViewBag.Estados = new SelectList(proyectoDropdownsData.Estados, "Id", "NombreEstado");
+                var proyectoDropdown = await proyectoService.ProyectoDropdownValues();
+                ViewBag.Estados = new SelectList(proyectoDropdown.Estados, "Id", "NombreEstado");
 
-                return View(proyectoNew);
+                return View(_proyectoDTO);
             }
-            await _service.AddAsync(proyectoNew);
+
+            await proyectoService.NuevoProyectoAsync(_proyectoDTO);
             return RedirectToAction(nameof(Index));
         }
 
         // Vista para Actualizar
-        public async Task<IActionResult> Update(int Id)
+        public async Task<IActionResult> Update(int _proyectoId)
         {
-            var proyectoDetails = await _service.GetByIdAsync(Id);
-            if (proyectoDetails == null)
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
+
+            if (proyectoDetalle == null)
             {
                 return View("NotFound");
             }
 
-            var response = new ProyectoNew()
+            var response = new ProyectoDTO()
             {
-                Id = proyectoDetails.Id,
-                Nombre = proyectoDetails.Nombre,
-                Descripcion = proyectoDetails.Descripcion,
-                FechaInicio = proyectoDetails.FechaInicio,
-                EstadoId = proyectoDetails.EstadoId
+                Id = proyectoDetalle.Id,
+                Nombre = proyectoDetalle.Nombre,
+                Descripcion = proyectoDetalle.Descripcion,
+                FechaInicio = proyectoDetalle.FechaInicio,
+                EstadoId = proyectoDetalle.EstadoId
             };
 
-            var proyectoDropdownsData = await _service.GetNewProyectoDropdownsValues();
-            ViewBag.Estados = new SelectList(proyectoDropdownsData.Estados, "Id", "NombreEstado");
+            var proyectoDropdown = await proyectoService.ProyectoDropdownValues();
+            ViewBag.Estados = new SelectList(proyectoDropdown.Estados, "Id", "NombreEstado");
 
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int Id, ProyectoNew proyectoNew)
+        public async Task<IActionResult> Update(int _proyectoId, ProyectoDTO _proyectoDTO)
         {
             if (!ModelState.IsValid)
             {
-                var proyectoDropdownsData = await _service.GetNewProyectoDropdownsValues();
-                ViewBag.Estados = new SelectList(proyectoDropdownsData.Estados, "Id", "NombreEstado");
+                var proyectoDropdown = await proyectoService.ProyectoDropdownValues();
+                ViewBag.Estados = new SelectList(proyectoDropdown.Estados, "Id", "NombreEstado");
 
-                return View(proyectoNew);
+                return View(_proyectoDTO);
             }
-            await _service.UpdateAsync(Id, proyectoNew);
+
+            await proyectoService.ActualizarProyectoAsync(_proyectoId, _proyectoDTO);
             return RedirectToAction(nameof(Index));
         }
 
         // Vista para Detalles con Tareas
-        public async Task<IActionResult> DetailsTarea(int Id)
+        public async Task<IActionResult> DetailsTarea(int _proyectoId)
         {
-            var proyectoDetails = await _service.GetByIdDetalleAsync(Id);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoDetalleAsync(_proyectoId);
 
-            if (proyectoDetails == null)
+            if (proyectoDetalle == null)
             {
                 return View("Error");
             }
 
-            return View(proyectoDetails);
+            return View(proyectoDetalle);
         }
 
-        public async Task<IActionResult> Details(int id)
+        public async Task<IActionResult> Details(int _proyectoId)
         {
-            var proyectoDetails = await _service.GetByIdAsync(id);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
 
-            if (proyectoDetails == null)
+            if (proyectoDetalle == null)
             {
                 return View("Error");
             }
-            return View(proyectoDetails);
+            return View(proyectoDetalle);
         }
 
         // Vista para Eliminar
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int _proyectoId)
         {
-            var proyectoDetails = await _service.GetByIdAsync(id);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
 
-            if (proyectoDetails == null)
+            if (proyectoDetalle == null)
             {
                 return View("Error");
             }
-            return View(proyectoDetails);
+            return View(proyectoDetalle);
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int _proyectoId)
         {
-            var actorDetails = await _service.GetByIdAsync(id);
-            if (actorDetails == null)
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
+
+            if (proyectoDetalle == null)
             {
                 return View("Error");
             }
 
-            await _service.DeleteAsync(id);
+            await proyectoService.BorrarProyectoAsync(_proyectoId);
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

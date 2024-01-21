@@ -7,9 +7,9 @@ namespace PROIV_PROYECTO.Interface
     {
 
         // Desplegables que se usaran para filtraciones en la auditoria
-        Task<AuditoriaDropdownsDTO> AuditoriaDropdownsValues();
+        Task<AuditoriaDropdownsDTO> AuditoriaDropdownValues();
 
         // Obtendremos todas las tareas y proyectos
-        Task<IEnumerable<Tarea>> ObtenerProyectosTareasAsync(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId);
+        Task<IEnumerable<Tarea>> ObtenerAuditoriaAsync(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId);
     }
 }

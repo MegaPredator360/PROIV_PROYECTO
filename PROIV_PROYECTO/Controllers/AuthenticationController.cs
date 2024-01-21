@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PROIV_PROYECTO.Interface;
-using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Controllers
 {
     public class AuthenticationController : Controller
     {
-        private readonly IAuthenticationService _service;
+        // ----------- Constructor
+        private readonly IAuthenticationService authService;
 
-        public AuthenticationController(IAuthenticationService service)
+        public AuthenticationController(IAuthenticationService _authService)
         {
-            _service = service;
+            authService = _authService;
         }
 
-
+        // ------ Carga de paginas
         public IActionResult Login()
         {
             return View();
@@ -25,52 +26,64 @@ namespace PROIV_PROYECTO.Controllers
             return View();
         }
 
-
-        [HttpPost]
-        public async Task<IActionResult> Login(Login login)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(login);
-            }
-
-            var result = await _service.LoginAsync(login);
-
-            if (result.StatusCode == 1)
-            {
-                return RedirectToAction("Index", "Home");
-            }
-            else
-            {
-                TempData["msg"] = result.Message;
-                return RedirectToAction(nameof(Login));
-            }
-        }
-
-        [Authorize]
-        public async Task<IActionResult> Logout()
-        {
-            await this._service.LogoutAsync();
-            return RedirectToAction("Index", "Home");
-        }
-
         [Authorize]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
+        // -------- HTTP Metodos
+        [HttpPost]
+        public async Task<IActionResult> Login(IniciarSesionDTO _iniciarSesionDTO)
+        {
+            // Carga la pagina para iniciar sesion
+            if (!ModelState.IsValid)
+            {
+                return View(_iniciarSesionDTO);
+            }
+
+            // Se envian los datos para verificar
+            var result = await authService.IniciarSesionAsync(_iniciarSesionDTO);
+
+            // Si se inicia sesion
+            if (result.StatusCode == 1)
+            {
+                // Sera redirigido a la pagina inicial
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                // Mostrara error
+                TempData["msg"] = result.Message;
+
+                return RedirectToAction(nameof(Login));
+            }
+        }
+
+        // Authorize = Para poder ingresar, debes de tener la sesion iniciada
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            // Se cierra la sesion
+            await this.authService.CerrarSesionAsync();
+
+            // Se redirige a la pagina inicial
+            return RedirectToAction("Index", "Home");
+        }
+
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> ChangePassword(ChangePassword changePassword)
+        public async Task<IActionResult> ChangePassword(CambiarContrasenaDTO _cambiarContrasenaDTO)
         {
             if (!ModelState.IsValid)
             {
-                return View(changePassword);
+                return View(_cambiarContrasenaDTO);
             }
-
-            var result = await _service.ChangePasswordAsync(changePassword, User.Identity!.Name!);
+            
+            // Se envian los datos de la contraseña
+            var result = await authService.CambiarContrasenaAsync(_cambiarContrasenaDTO, User.Identity!.Name!);
             TempData["msg"] = result.Message;
+
             return RedirectToAction("Index", "Home");
         }
     }

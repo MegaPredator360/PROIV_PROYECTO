@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using PROIV_PROYECTO.Models;
 using PROIV_PROYECTO.Interface;
@@ -10,37 +8,39 @@ namespace PROIV_PROYECTO.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly IAuditoriaService _service;
+        // ----------- Constructor
+        private readonly ILogger<HomeController> logger;
+        private readonly IAuditoriaService auditoriaService;
 
-        public HomeController(ILogger<HomeController> logger, IAuditoriaService service)
+        public HomeController(ILogger<HomeController> _logger, IAuditoriaService _auditoriaService)
         {
-            _logger = logger;
-            _service = service;
+            logger = _logger;
+            auditoriaService = _auditoriaService;
         }
 
+        // --------- Carga de Paginas
         public IActionResult Index()
         {
             return View();
-        }
-
-        public async Task<IActionResult> Auditoria(int ProyectoId, int TareaId, int EstadoId, string UsuarioId)
-        {
-            var data = await _service.GetAllAsync(ProyectoId, TareaId, EstadoId, UsuarioId);
-
-            var auditoriaDropdownsData = await _service.GetNewAuditoriaDropdownsValues();
-            ViewBag.Proyectos = new SelectList(auditoriaDropdownsData.Proyectos, "Id", "Nombre");
-            ViewBag.Tareas = new SelectList(auditoriaDropdownsData.Tareas, "Id", "Nombre");
-            ViewBag.Estados = new SelectList(auditoriaDropdownsData.Estados, "Id", "NombreEstado");
-            ViewBag.Usuarios = new SelectList(auditoriaDropdownsData.Usuarios, "Id", "FullName");
-
-            return View(data);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<IActionResult> Auditoria(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId)
+        {
+            var data = await auditoriaService.ObtenerAuditoriaAsync(_proyectoId, _tareaId, _estadoId, _usuarioId);
+
+            var auditoriaDropdown = await auditoriaService.AuditoriaDropdownValues();
+            ViewBag.Proyectos = new SelectList(auditoriaDropdown.Proyectos, "Id", "Nombre");
+            ViewBag.Tareas = new SelectList(auditoriaDropdown.Tareas, "Id", "Nombre");
+            ViewBag.Estados = new SelectList(auditoriaDropdown.Estados, "Id", "NombreEstado");
+            ViewBag.Usuarios = new SelectList(auditoriaDropdown.Usuarios, "Id", "FullName");
+
+            return View(data);
         }
     }
 }

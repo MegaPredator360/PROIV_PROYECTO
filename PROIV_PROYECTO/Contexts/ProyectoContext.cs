@@ -13,10 +13,10 @@ namespace PROIV_PROYECTO.Contexts
         public DbSet<TareaUsuario> TareasUsuarios { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Estado> Estados { get; set; }
-        public DbSet<TareaListaDTO> TareaListaDTO { get; set; }
-        public DbSet<TareaUsuarioListaDTO> TareaUsuarioListaDTO { get; set; }
-        public DbSet<ProyectoListaDTO> ProyectoListaDTO { get; set; }
-        public DbSet<ProyectoDetalleDTO> ProyectoDetalleDTO { get; set; }
+        public DbSet<TareaListaDTO> TareaListaDTOs { get; set; }
+        public DbSet<TareaUsuarioListaDTO> TareaUsuarioListaDTOs { get; set; }
+        public DbSet<ProyectoListaDTO> ProyectoListaDTOs { get; set; }
+        public DbSet<ProyectoDetalleDTO> ProyectoDetalleDTOs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder _builder)
         {

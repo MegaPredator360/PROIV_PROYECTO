@@ -1,62 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Identity;
-using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.ModelsDTO;
 using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
-using System.Data;
 
 namespace PROIV_PROYECTO.Controllers
 {
     public class TareaController : Controller
     {
-        private readonly ITareaService _service;
-        private readonly UserManager<ApplicationUser> _userManager;
+        // ---------- Constructor
+        private readonly ITareaService tareaService;
 
-        public TareaController(ITareaService service, UserManager<ApplicationUser> userManager)
+        public TareaController(ITareaService _tareaService)
         {
-            _service = service;
-            _userManager = userManager;
-        }
-
-        [Authorize(Roles = "Usuario")]
-        public async Task<IActionResult> UsuarioDetails(int Id)
-        {
-            var tareaDetails = await _service.GetByIdAsync(Id);
-            if (tareaDetails == null)
-            {
-                return View("Error");
-            }
-
-            var tareaDropdownsData = await _service.GetNewTareaDropdownsValues();
-            ViewBag.Proyectos = new SelectList(tareaDropdownsData.Proyectos, "Id", "Nombre");
-            ViewBag.Usuarios = new SelectList(tareaDropdownsData.Usuarios, "Id", "FullName");
-            ViewBag.Estados = new SelectList(tareaDropdownsData.Estados, "Id", "NombreEstado");
-
-            return View(tareaDetails);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> UsuarioDetails(int Id, Tarea tarea)
-        {
-            await _service.UpdateUsuarioAsync(Id, tarea);
-            return RedirectToAction(nameof(UsuarioIndex));
-        }
-
-        [Authorize(Roles = "Usuario")]
-        public async Task<IActionResult> UsuarioIndex(string SearchBy, string SearchString)
-        {
-            var username = _userManager.GetUserId(HttpContext.User);
-            ViewData["CurrentSearch"] = SearchString;
-            var data = await _service.GetAllUserAsync(SearchBy, SearchString, username);
-            return View(data);
+            tareaService = _tareaService;
         }
 
         [Authorize(Roles = "Administrador,Gestor")]
-        public async Task<IActionResult> Index(string SearchBy, string SearchString)
+        public async Task<IActionResult> Index(string _filtrar, string _textoBusqueda)
         {
-            ViewData["CurrentSearch"] = SearchString;
-            var data = await _service.GetAllAsync(SearchBy, SearchString);
+            ViewData["CurrentSearch"] = _textoBusqueda;
+
+            var data = await tareaService.ObtenerTareaAsync(_filtrar, _textoBusqueda);
             return View(data);
         }
 
@@ -65,114 +30,118 @@ namespace PROIV_PROYECTO.Controllers
         [Authorize(Roles = "Administrador,Gestor")]
         public async Task<IActionResult> Create()
         {
-            var tareaDropdownsData = await _service.GetNewTareaDropdownsValues();
-            ViewBag.Proyectos = new SelectList(tareaDropdownsData.Proyectos, "Id", "Nombre");
-            ViewBag.Usuarios = new SelectList(tareaDropdownsData.Usuarios, "Id", "FullName");
-            ViewBag.Estados = new SelectList(tareaDropdownsData.Estados, "Id", "NombreEstado");
+            var tareaDropdown = await tareaService.TareaDropdownValues();
+
+            ViewBag.Proyectos = new SelectList(tareaDropdown.Proyectos, "Id", "Nombre");
+            ViewBag.Usuarios = new SelectList(tareaDropdown.Usuarios, "Id", "FullName");
+            ViewBag.Estados = new SelectList(tareaDropdown.Estados, "Id", "NombreEstado");
 
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(TareaNew tareaNew)
+        public async Task<IActionResult> Create(TareaDTO _tareaDTO)
         {
             if (!ModelState.IsValid)
             {
-                var tareaDropdownsData = await _service.GetNewTareaDropdownsValues();
-                ViewBag.Proyectos = new SelectList(tareaDropdownsData.Proyectos, "Id", "Nombre");
-                ViewBag.Usuarios = new SelectList(tareaDropdownsData.Usuarios, "Id", "FullName");
-                ViewBag.Estados = new SelectList(tareaDropdownsData.Estados, "Id", "NombreEstado");
+                var tareaDropdown = await tareaService.TareaDropdownValues();
 
-                return View(tareaNew);
+                ViewBag.Proyectos = new SelectList(tareaDropdown.Proyectos, "Id", "Nombre");
+                ViewBag.Usuarios = new SelectList(tareaDropdown.Usuarios, "Id", "FullName");
+                ViewBag.Estados = new SelectList(tareaDropdown.Estados, "Id", "NombreEstado");
+
+                return View(_tareaDTO);
             }
 
-            await _service.AddAsync(tareaNew);
+            await tareaService.NuevaTareaAsync(_tareaDTO);
             return RedirectToAction(nameof(Index));
         }
 
         // Vista para Actualizar
         [Authorize(Roles = "Administrador,Gestor")]
-        public async Task<IActionResult> Update(int Id)
+        public async Task<IActionResult> Update(int _tareaId)
         {
-            var tareaDetails = await _service.GetByIdAsync(Id);
-            if (tareaDetails == null)
+            var tareaDetalle = await tareaService.ObtenerTareaIdAsync(_tareaId);
+
+            if (tareaDetalle == null)
             {
                 return View("Error");
             }
 
-            var response = new TareaNew()
+            var response = new TareaDTO()
             {
-                Id = tareaDetails.Id,
-                Nombre = tareaDetails.Nombre,
-                Descripcion = tareaDetails.Descripcion,
-                ProyectoId = tareaDetails.ProyectoId,
-                EstadoId = tareaDetails.EstadoId,
-                UserIds = tareaDetails.TareasUsuarios.Select(n => n.UsuarioId).ToList()
+                Id = tareaDetalle.Id,
+                Nombre = tareaDetalle.Nombre,
+                Descripcion = tareaDetalle.Descripcion,
+                ProyectoId = tareaDetalle.ProyectoId,
+                EstadoId = tareaDetalle.EstadoId,
+                AssignedUsersId = tareaDetalle.AssignedUsersId
             };
 
-            var tareaDropdownsData = await _service.GetNewTareaDropdownsValues();
-            ViewBag.Proyectos = new SelectList(tareaDropdownsData.Proyectos, "Id", "Nombre");
-            ViewBag.Usuarios = new SelectList(tareaDropdownsData.Usuarios, "Id", "FullName");
-            ViewBag.Estados = new SelectList(tareaDropdownsData.Estados, "Id", "NombreEstado");
+            var tareaDropdown = await tareaService.TareaDropdownValues();
+            ViewBag.Proyectos = new SelectList(tareaDropdown.Proyectos, "Id", "Nombre");
+            ViewBag.Usuarios = new SelectList(tareaDropdown.Usuarios, "Id", "FullName");
+            ViewBag.Estados = new SelectList(tareaDropdown.Estados, "Id", "NombreEstado");
 
             return View(response);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int Id, TareaNew tareaNew)
+        public async Task<IActionResult> Update(int _tareaId, TareaDTO _tareaDTO)
         {
             if (!ModelState.IsValid)
             {
-                var tareaDropdownsData = await _service.GetNewTareaDropdownsValues();
-                ViewBag.Proyectos = new SelectList(tareaDropdownsData.Proyectos, "Id", "Nombre");
-                ViewBag.Usuarios = new SelectList(tareaDropdownsData.Usuarios, "Id", "FullName");
-                ViewBag.Estados = new SelectList(tareaDropdownsData.Estados, "Id", "NombreEstado");
+                var tareaDropdown = await tareaService.TareaDropdownValues();
 
-                return View(tareaNew);
+                ViewBag.Proyectos = new SelectList(tareaDropdown.Proyectos, "Id", "Nombre");
+                ViewBag.Usuarios = new SelectList(tareaDropdown.Usuarios, "Id", "FullName");
+                ViewBag.Estados = new SelectList(tareaDropdown.Estados, "Id", "NombreEstado");
+
+                return View(_tareaDTO);
             }
-            await _service.UpdateAsync(Id, tareaNew);
+            await tareaService.ActualizarTareaAsync(_tareaId, _tareaDTO);
             return RedirectToAction(nameof(Index));
         }
 
         // Vista para Detalles
         [Authorize(Roles = "Administrador,Gestor")]
-        public async Task<IActionResult> Details(int Id)
+        public async Task<IActionResult> Details(int _tareaId)
         {
-            var tareaDetails = await _service.GetByIdAsync(Id);
+            var tareaDetalle = await tareaService.ObtenerTareaIdAsync(_tareaId);
 
-            if (tareaDetails == null)
+            if (tareaDetalle == null)
             {
                 return View("Error");
             }
 
-            return View(tareaDetails);
+            return View(tareaDetalle);
         }
 
         // Vista para Eliminar
         [Authorize(Roles = "Administrador,Gestor")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int _tareaId)
         {
-            var tareaDetails = await _service.GetByIdAsync(id);
+            var tareaDetalle = await tareaService.ObtenerTareaIdAsync(_tareaId);
 
-            if (tareaDetails == null)
+            if (tareaDetalle == null)
             {
                 return View("Error");
             }
-            return View(tareaDetails);
+            return View(tareaDetalle);
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int _tareaId)
         {
-            var tareaDetails = await _service.GetByIdAsync(id);
-            if (tareaDetails == null)
+            var tareaDetalle = await tareaService.ObtenerTareaIdAsync(_tareaId);
+
+            if (tareaDetalle == null)
             {
                 return View("Error");
             }
 
-            await _service.DeleteAsync(id);
+            await tareaService.BorrarTareaAsync(_tareaId);
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

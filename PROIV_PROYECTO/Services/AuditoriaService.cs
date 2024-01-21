@@ -19,7 +19,7 @@ namespace PROIV_PROYECTO.Services
         }
 
         // Desplegables que se usaran para filtraciones en la auditoria
-        public async Task<AuditoriaDropdownsDTO> AuditoriaDropdownsValues()
+        public async Task<AuditoriaDropdownsDTO> AuditoriaDropdownValues()
         {
             var response = new AuditoriaDropdownsDTO()
             {
@@ -224,7 +224,7 @@ namespace PROIV_PROYECTO.Services
         }
         */
 
-        public async Task<IEnumerable<Tarea>> ObtenerProyectosTareasAsync(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId)
+        public async Task<IEnumerable<Tarea>> ObtenerAuditoriaAsync(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId)
         {
             var query = proyectoContext.Tareas.AsQueryable();
 

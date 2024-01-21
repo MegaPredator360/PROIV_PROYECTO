@@ -1,129 +1,109 @@
-﻿using Azure;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using PROIV_PROYECTO.Contexts;
 using PROIV_PROYECTO.Interface;
-using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Controllers
 {
     [Authorize(Roles = "Administrador")]
     public class UsuarioController : Controller
     {
-        public readonly IUsuarioService _service;
-        public readonly ApplicationDbContext _context;
-        public UsuarioController(IUsuarioService service, ApplicationDbContext context)
+        public readonly IUsuarioService usuarioService;
+        public UsuarioController(IUsuarioService _usuarioService)
         {
-            _service = service;
-            _context = context;
+            usuarioService = _usuarioService;
         }
 
         // Vista de Index para Usuarios
-        public IActionResult Index(string SearchBy, string SearchString)
+        public IActionResult Index(string _filtrar, string _textoBusqueda)
         {
-            ViewData["CurrentSearch"] = SearchString;
-            var data = _service.GetUsuarios(SearchBy, SearchString);
+            ViewData["CurrentSearch"] = _textoBusqueda;
+
+            var data = usuarioService.ObtenerUsuario(_filtrar, _textoBusqueda);
             return View(data);
         }
 
         // Vista para Crear Usuario
         public async Task<IActionResult> Registrar()
         {
-            var usuarioDropdownsData = _service.GetNewUsuarioDropdownsValues();
-            ViewBag.Roles = new SelectList(usuarioDropdownsData.appRoles, "Id", "Name");
+            var usuarioDropdown = usuarioService.UsuarioDropdownValues();
+            ViewBag.Permisos = new SelectList(usuarioDropdown.Permisos, "Id", "Name");
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Registrar(UsuarioDatos usuarioDatos)
+        public async Task<IActionResult> Registrar(UsuarioDTO _usuarioDTO)
         {
             if (!ModelState.IsValid) 
             {
-                var usuarioDropdownsData = _service.GetNewUsuarioDropdownsValues();
-                ViewBag.Roles = new SelectList(usuarioDropdownsData.appRoles, "Id", "Name");
+                var usuarioDropdown = usuarioService.UsuarioDropdownValues();
 
-                return View(usuarioDatos);
+                ViewBag.Permisos = new SelectList(usuarioDropdown.Permisos, "Id", "Name");
+
+                return View(_usuarioDTO);
             }
 
-            var result = await _service.AddUsuarioAsync(usuarioDatos);
+            var result = await usuarioService.NuevoUsuarioAsync(_usuarioDTO);
             TempData["msg"] = result.Message;
             return RedirectToAction("Index");
         }
 
         // Vista para actualizar usuario
-        public IActionResult Actualizar(string Id)
+        public IActionResult Actualizar(string _usuarioId)
         {
 
-            var detalleUsuario = _service.GetUsuarioId(Id);
-            if (detalleUsuario == null)
+            var usuarioDetalle = usuarioService.ObtenerUsuarioId(_usuarioId);
+
+            if (usuarioDetalle == null)
             {
                 return View("Error");
             }
 
-            var usuarioDropdownsData = _service.GetNewUsuarioDropdownsValues();
-            ViewBag.Roles = new SelectList(usuarioDropdownsData.appRoles, "Id", "Name");
+            var usuarioDropdown = usuarioService.UsuarioDropdownValues();
+            ViewBag.Permisos = new SelectList(usuarioDropdown.Permisos, "Id", "Name");
 
-            return View(detalleUsuario);
+            return View(usuarioDetalle);
         }
-
         
         [HttpPost]
-        public async Task<IActionResult> Actualizar(UsuarioActualizar usuarioActualizar)
+        public async Task<IActionResult> Actualizar(UsuarioDTO _usuarioDTO)
         {
             if (!ModelState.IsValid)
             {
-                var usuarioDropdownsData = _service.GetNewUsuarioDropdownsValues();
-                ViewBag.Roles = new SelectList(usuarioDropdownsData.appRoles, "Id", "Name");
+                var usuarioDropdown = usuarioService.UsuarioDropdownValues();
+                ViewBag.Permisos = new SelectList(usuarioDropdown.Permisos, "Id", "Name");
 
-                return View(usuarioActualizar);
+                return View(_usuarioDTO);
             }
 
-            var result = await _service.UpdateUsuario(usuarioActualizar);
+            await usuarioService.ActualizarUsuarioAsync(_usuarioDTO);
             return RedirectToAction("Index");
         }
 
         // Vista para borrar usuarios
-        public async Task<IActionResult> Borrar(string Id)
+        public async Task<IActionResult> Borrar(string _usuarioId)
         {
-            var detalleUsuario = _service.GetUsuaDeleId(Id);
-            if (detalleUsuario == null)
+            var usuarioDetalle = usuarioService.ObtenerUsuarioBorrarId(_usuarioId);
+            if (usuarioDetalle == null)
             {
                 return View("Error");
             }
 
-            return View(detalleUsuario);
+            return View(usuarioDetalle);
         }
 
         [HttpPost]
-        public async Task<IActionResult> BorrarUsuario(UsuarioActualizar usuarioActualizar)
+        public async Task<IActionResult> BorrarUsuario(UsuarioDTO _usuarioDTO)
         {
             if (!ModelState.IsValid)
             {
-                var detalleUsuario = _service.GetUsuarioId(usuarioActualizar.Id);
-                return View(detalleUsuario);
+                var usuarioDetalle = usuarioService.ObtenerUsuarioId(_usuarioDTO!.Id!);
+                return View(usuarioDetalle);
             }
 
-            var result = await _service.DeleteUsuario(usuarioActualizar);
+            await usuarioService.BorrarUsuario(_usuarioDTO);
             return RedirectToAction("Index");
-        }
-
-        [AllowAnonymous]
-        public async Task<IActionResult> RegisterAdmin()
-        {
-            UsuarioDatos usuarioDatos = new UsuarioDatos
-            {
-                IdNumber = "NumeroCedula",
-                UserName = "NombreUsuario",
-                Email = "Correo@correo.com",
-                FullName = "NombreCompleto",
-                Password = "Contraseña"
-            };
-            usuarioDatos.Role = "IdRole";
-            var result = await this._service.AddUsuarioAsync(usuarioDatos);
-            return Ok(result);
         }
     }
 }

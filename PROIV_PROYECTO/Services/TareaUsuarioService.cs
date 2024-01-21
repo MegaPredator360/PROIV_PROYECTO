@@ -23,22 +23,22 @@ namespace PROIV_PROYECTO.Services
         {
             if (_filtrar == "Nombre" && _textoBusqueda != null)
             {
-                var result = await proyectoContext.TareaUsuarioListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND T.Nombre LIKE '%" + _textoBusqueda + "%'").ToListAsync();
+                var result = await proyectoContext.TareaUsuarioListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND T.Nombre LIKE '%" + _textoBusqueda + "%'").ToListAsync();
                 return result;
             }
             else if (_filtrar == "Proyecto" && _textoBusqueda != null)
             {
-                var result = await proyectoContext.TareaUsuarioListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND P.Nombre LIKE '%" + _textoBusqueda + "%'").ToListAsync();
+                var result = await proyectoContext.TareaUsuarioListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND P.Nombre LIKE '%" + _textoBusqueda + "%'").ToListAsync();
                 return result;
             }
             else if (_filtrar == "Estado" && _textoBusqueda != null)
             {
-                var result = await proyectoContext.TareaUsuarioListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND E.NombreEstado LIKE '%" + _textoBusqueda + "%'").ToListAsync();
+                var result = await proyectoContext.TareaUsuarioListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = '" + _userName + "' AND E.NombreEstado LIKE '%" + _textoBusqueda + "%'").ToListAsync();
                 return result;
             }
             else
             {
-                var result = await proyectoContext.TareaUsuarioListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = {0}", _userName).ToListAsync();
+                var result = await proyectoContext.TareaUsuarioListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS TU ON T.Id = TU.TareaId WHERE TU.UsuarioId = {0}", _userName).ToListAsync();
                 return result;
             }
         }

@@ -58,22 +58,22 @@ namespace PROIV_PROYECTO.Services
         {
             if (_filtrar == "Nombre")
             {
-                var result = await proyectoContext.TareaListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE T.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
+                var result = await proyectoContext.TareaListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE T.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
                 return result;
             }
             else if (_filtrar == "Proyecto")
             {
-                var result = await proyectoContext.TareaListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
+                var result = await proyectoContext.TareaListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
                 return result;
             }
             else if (_filtrar == "Estado")
             {
-                var result = await proyectoContext.TareaListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE E.NombreEstado LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
+                var result = await proyectoContext.TareaListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE E.NombreEstado LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
                 return result;
             }
             else
             {
-                var result = await proyectoContext.TareaListas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
+                var result = await proyectoContext.TareaListaDTOs.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
                 return result;
             }
         }
@@ -91,14 +91,14 @@ namespace PROIV_PROYECTO.Services
 
             List<string>? usuarioAsignados = null;
 
-            foreach (var usuarioId in obtenerUsuarios.UsuarioId!)
+            foreach (var usuarioId in obtenerUsuarios!.UsuarioId!)
             {
-                usuarioAsignados.Add(usuarioId.ToString());
+                usuarioAsignados!.Add(usuarioId.ToString());
             }
 
             var tareaDTO = new TareaDTO()
             {
-                Id = tareaEncontrada.Id,
+                Id = tareaEncontrada!.Id,
                 Nombre = tareaEncontrada.Nombre,
                 Descripcion = tareaEncontrada.Descripcion,
                 EstadoId = tareaEncontrada.EstadoId,
@@ -106,7 +106,7 @@ namespace PROIV_PROYECTO.Services
                 AssignedUsersId = usuarioAsignados
             };
 
-            return tareaDTO!;
+            return tareaDTO;
         }
 
         public async Task ActualizarTareaAsync(int _tareaId, TareaDTO _tareaDTO)
