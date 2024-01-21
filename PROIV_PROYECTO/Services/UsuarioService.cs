@@ -1,229 +1,247 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using PROIV_PROYECTO.Contexts;
 using PROIV_PROYECTO.Interface;
 using PROIV_PROYECTO.Models;
-using System.Threading;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Services
 {
     public class UsuarioService : IUsuarioService
     {
-        public readonly UserManager<ApplicationUser> _userManager;
-        public readonly RoleManager<ApplicationRole> _roleManager;
-        public readonly SignInManager<ApplicationUser> _signInManager;
-        public readonly UserIdentityContext _context;
+        public readonly UserManager<ApplicationUser> userManager;
+        public readonly RoleManager<Permiso> roleManager;
+        public readonly SignInManager<ApplicationUser> signInManager;
+        public readonly UsuarioContext usuarioContext;
 
-        public UsuarioService(UserManager<ApplicationUser> userManager, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager, UserIdentityContext context)
+        public UsuarioService(UserManager<ApplicationUser> _userManager, RoleManager<Permiso> _roleManager, SignInManager<ApplicationUser> _signInManager, UsuarioContext _usuarioContext)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _signInManager = signInManager;
-            _context = context;
+            userManager = _userManager;
+            roleManager = _roleManager;
+            signInManager = _signInManager;
+            usuarioContext = _usuarioContext;
         }
+        
         // Obtener todos los usuarios para index
-        public IEnumerable<UsuarioLista> GetUsuarios(string SearchBy, string SearchString)
+        public IEnumerable<UsuarioListaDTO> ObtenerUsuario(string _filtrar, string _textoBusqueda)
         {
-            if (SearchBy == "Nombre")
+            if (_filtrar == "Nombre")
             {
-                var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioLista()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-               }).Where(u => u.FullName.Contains(SearchString) || SearchString == null).ToList();
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                    .ToList()
+                    .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
+                    {
+                        Id = r.Key.Id,
+                        IdNumber = r.Key.IdNumber,
+                        FullName = r.Key.FullName,
+                        UserName = r.Key.UserName,
+                        Email = r.Key.Email,
+                        Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
+                    }).Where(u => u.FullName.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                
                 return result2;
             }
-            else if (SearchBy == "Cedula")
+            else if (_filtrar == "Cedula")
             {
-                var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioLista()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-               }).Where(u => u.IdNumber.Contains(SearchString) || SearchString == null).ToList();
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                    .ToList()
+                    .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
+                    {
+                        Id = r.Key.Id,
+                        IdNumber = r.Key.IdNumber,
+                        FullName = r.Key.FullName,
+                        UserName = r.Key.UserName,
+                        Email = r.Key.Email,
+                        Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
+                    }).Where(u => u.IdNumber.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                
                 return result2;
             }
-            else if (SearchBy == "Permisos")
+            else if (_filtrar == "Permisos")
             {
-                var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioLista()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-               }).Where(u => u.Role.Contains(SearchString) || SearchString == null).ToList();
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                    .ToList()
+                    .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
+                    {
+                        Id = r.Key.Id,
+                        IdNumber = r.Key.IdNumber,
+                        FullName = r.Key.FullName,
+                        UserName = r.Key.UserName,
+                        Email = r.Key.Email,
+                        Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
+                    }).Where(u => u.Role.Contains(_textoBusqueda) || _textoBusqueda == null).ToList();
+                
                 return result2;
             }
             else
             {
-                var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioLista()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-               }).ToList();
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                    .ToList()
+                    .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
+                    {
+                        Id = r.Key.Id,
+                        IdNumber = r.Key.IdNumber,
+                        FullName = r.Key.FullName,
+                        UserName = r.Key.UserName,
+                        Email = r.Key.Email,
+                        Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
+                    }).ToList();
+                
                 return result2;
             }
         }
 
         // Añadir Usuarios
-        public async Task<Status> AddUsuarioAsync(UsuarioDatos usuarioDatos)
+        public async Task<StatusDTO> NuevoUsuarioAsync(UsuarioDTO _usuarioDTO)
         {
-            var status = new Status();
-            var userExists = await _userManager.FindByNameAsync(usuarioDatos.UserName);
-            if (userExists != null)
+            var statusDTO = new StatusDTO();
+
+            // Se verificara si el usuario nuevo existe en la base de datos
+            var usuarioExiste = await userManager.FindByNameAsync(_usuarioDTO.UserName!);
+
+            // Si el usuario existe
+            if (usuarioExiste != null)
             {
-                status.StatusCode = 0;
-                status.Message = "El usuario ya existe";
-                return status;
+                statusDTO.StatusCode = 0;
+                statusDTO.Message = "El usuario ya existe";
+
+                return statusDTO;
             }
-            ApplicationUser user = new ApplicationUser()
+
+            // Se convierten los datos a ApplicationUser
+            ApplicationUser usuarioNuevo = new ApplicationUser()
             {
-                Email = usuarioDatos.Email,
+                Email = _usuarioDTO.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = usuarioDatos.UserName,
-                FullName = usuarioDatos.FullName,
-                IdNumber = usuarioDatos.IdNumber,
+                UserName = _usuarioDTO.UserName,
+                FullName = _usuarioDTO.FullName,
+                IdNumber = _usuarioDTO.IdNumber,
                 EmailConfirmed = true,
                 PhoneNumberConfirmed = true,
             };
-            var result = await _userManager.CreateAsync(user, usuarioDatos.Password);
-            if (!result.Succeeded)
+
+            // Se crea el usuario, y se encripta la contraseña
+            var resultado = await userManager.CreateAsync(usuarioNuevo, _usuarioDTO.Password!);
+            
+            // Si ocurrio un error durante la creacion del usuario
+            if (!resultado.Succeeded)
             {
-                status.StatusCode = 0;
-                status.Message = "Ocurrio un error al crear el usuario";
-                return status;
+                statusDTO.StatusCode = 0;
+                statusDTO.Message = "Ocurrio un error al crear el usuario";
+
+                return statusDTO;
             }
 
-            var roleName = _context.Roles.Where(r => r.Id == usuarioDatos.Role).FirstOrDefault();
+            // Se busca el rol al cual se quiere ligar el usuario nuevo
+            var roleName = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
-            if (await _roleManager.RoleExistsAsync(roleName.Name))
+            // Se agregar el usuario y el rol en la tabla relacional AspNetUserRoles
+            if (await roleManager.RoleExistsAsync(roleName.Name!))
             {
-                await _userManager.AddToRoleAsync(user, roleName.Name);
+                await userManager.AddToRoleAsync(usuarioNuevo, roleName.Name!);
             }
 
-            status.StatusCode = 1;
-            status.Message = null;
-            return status;
+            statusDTO.StatusCode = 1;
+            statusDTO.Message = null;
+
+            return statusDTO;
         }
 
         // Obtener Id de Usuarios
-        public UsuarioActualizar GetUsuarioId(string Id)
+        public UsuarioDTO ObtenerUsuarioId(string _usuarioId)
         {
-            var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioActualizar()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Id).ToArray())
-               }).FirstOrDefault(p => p.Id == Id);
-              return result2;
+            var result2 = usuarioContext.Users
+                .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                .ToList()
+                .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioDTO()
+                {
+                    Id = r.Key.Id,
+                    IdNumber = r.Key.IdNumber,
+                    FullName = r.Key.FullName,
+                    UserName = r.Key.UserName,
+                    Email = r.Key.Email,
+                    Role = string.Join(",", r.Select(c => c.r.Id).ToArray())
+                }).FirstOrDefault(p => p.Id == _usuarioId);
+
+            return result2;
         }
 
-        public UsuarioActualizar GetUsuaDeleId(string Id)
+        public UsuarioDTO ObtenerUsuarioBorrarId(string _usuarioId)
         {
-            var result2 = _context.Users
-               .Join(_context.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-               .Join(_context.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
-               .ToList()
-               .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioActualizar()
-               {
-                   Id = r.Key.Id,
-                   IdNumber = r.Key.IdNumber,
-                   FullName = r.Key.FullName,
-                   UserName = r.Key.UserName,
-                   Email = r.Key.Email,
-                   Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
-               }).FirstOrDefault(p => p.Id == Id);
+            var result2 = usuarioContext.Users
+                .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                .ToList()
+                .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioDTO()
+                {
+                    Id = r.Key.Id,
+                    IdNumber = r.Key.IdNumber,
+                    FullName = r.Key.FullName,
+                    UserName = r.Key.UserName,
+                    Email = r.Key.Email,
+                    Role = string.Join(",", r.Select(c => c.r.Name).ToArray())
+                }).FirstOrDefault(p => p.Id == _usuarioId);
+
             return result2;
         }
 
         // Lista de Roles Registrados
-        public NewUsuarioDropdowns GetNewUsuarioDropdownsValues()
+        public UsuarioDropdownDTO UsuarioDropdownValues()
         {
-            var response = new NewUsuarioDropdowns()
+            var response = new UsuarioDropdownDTO()
             {
-                appRoles = _context.Roles.OrderBy(n => n.Name).ToList(),
+                Permisos = usuarioContext.Roles.OrderBy(n => n.Name).ToList(),
             };
 
             return response;
         }
 
         // Actualizar Usuarios
-        public async Task<ApplicationUser> UpdateUsuario(UsuarioActualizar usuarioActualizar)
+        public async Task ActualizarUsuarioAsync(UsuarioDTO _usuarioDTO)
         {
-            var user = await _userManager.FindByIdAsync(usuarioActualizar.Id);
-            var role = await _userManager.GetRolesAsync(user);
+            var usuarioEncontrado = await userManager.FindByIdAsync(_usuarioDTO.Id!);
+            var permisoEncontrado = await userManager.GetRolesAsync(usuarioEncontrado!);
 
-            if (await _userManager.IsInRoleAsync(user, role.FirstOrDefault()))
+            if (await userManager.IsInRoleAsync(usuarioEncontrado!, permisoEncontrado.FirstOrDefault()!))
             {
-                await _userManager.RemoveFromRoleAsync(user, role.FirstOrDefault());
+                await userManager.RemoveFromRoleAsync(usuarioEncontrado!, permisoEncontrado.FirstOrDefault()!);
             }
 
-            var roleName = _context.Roles.Where(r => r.Id == usuarioActualizar.Role).FirstOrDefault();
+            var permisoNombre = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
-            if (await _roleManager.RoleExistsAsync(roleName.Name))
+            if (await roleManager.RoleExistsAsync(permisoNombre.Name!))
             {
-                await _userManager.AddToRoleAsync(user, roleName.Name);
+                await userManager.AddToRoleAsync(usuarioEncontrado!, permisoNombre.Name!);
             }
 
-            user.Email = usuarioActualizar.Email;
-            user.NormalizedEmail = usuarioActualizar.Email.ToUpper();
-            user.UserName = usuarioActualizar.UserName;
-            user.NormalizedUserName = usuarioActualizar.UserName.ToUpper();
-            user.FullName = usuarioActualizar.FullName;
-            user.IdNumber = usuarioActualizar.IdNumber;
+            usuarioEncontrado.Email = _usuarioDTO.Email;
+            usuarioEncontrado.NormalizedEmail = _usuarioDTO.Email.ToUpper();
+            usuarioEncontrado.UserName = _usuarioDTO.UserName;
+            usuarioEncontrado.NormalizedUserName = _usuarioDTO.UserName.ToUpper();
+            usuarioEncontrado.FullName = _usuarioDTO.FullName;
+            usuarioEncontrado.IdNumber = _usuarioDTO.IdNumber;
             
-            _context.Update(user);
-            _context.SaveChanges();
-            return user;
+            usuarioContext.Update(usuarioEncontrado);
+            usuarioContext.SaveChanges();
         }
 
-        public async Task<ApplicationUser> DeleteUsuario(UsuarioActualizar usuarioActualizar)
+        public async Task BorrarUsuario(UsuarioDTO _usuarioDTO)
         {
-            var user = await _userManager.FindByIdAsync(usuarioActualizar.Id);
-            var role = await _userManager.GetRolesAsync(user);
+            var usuarioEncontrado = await userManager.FindByIdAsync(_usuarioDTO.Id);
+            var permisoEncontrado = await userManager.GetRolesAsync(usuarioEncontrado!);
 
-            await _userManager.RemoveFromRoleAsync(user, role.FirstOrDefault());
+            await userManager.RemoveFromRoleAsync(usuarioEncontrado, permisoEncontrado.FirstOrDefault());
             
-            _context.Remove(user);
-            _context.SaveChanges();
-            return user;
+            usuarioContext.Remove(usuarioEncontrado);
+            usuarioContext.SaveChanges();
         }
     }
 }

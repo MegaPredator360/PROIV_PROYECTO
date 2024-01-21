@@ -1,17 +1,17 @@
-﻿using PROIV_PROYECTO.Models;
+﻿using PROIV_PROYECTO.ModelsDTO;
 using System.Threading;
 
 namespace PROIV_PROYECTO.Interface
 {
     public interface IUsuarioService
     {
-        IEnumerable<UsuarioLista> GetUsuarios(string SearchBy, string SearchString);
-        UsuarioActualizar GetUsuarioId(string Id);
+        IEnumerable<UsuarioListaDTO> ObtenerUsuario(string _filtrar, string _textoBusqueda);
+        UsuarioDTO ObtenerUsuarioId(string _usuarioId);
 
-        UsuarioActualizar GetUsuaDeleId(string Id);
-        Task<Status> AddUsuarioAsync(UsuarioDatos usuarioDatos);
-        NewUsuarioDropdowns GetNewUsuarioDropdownsValues();
-        Task<ApplicationUser> UpdateUsuario(UsuarioActualizar usuarioActualizar);
-        Task<ApplicationUser> DeleteUsuario(UsuarioActualizar usuarioActualizar);
+        UsuarioDTO ObtenerUsuarioBorrarId(string _usuarioId);
+        Task<StatusDTO> NuevoUsuarioAsync(UsuarioDTO _usuarioDTO);
+        UsuarioDropdownDTO UsuarioDropdownValues();
+        Task ActualizarUsuarioAsync(UsuarioDTO _usuarioDTO);
+        Task BorrarUsuario(UsuarioDTO _usuarioDTO);
     }
 }

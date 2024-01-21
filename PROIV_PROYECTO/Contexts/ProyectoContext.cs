@@ -4,12 +4,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace PROIV_PROYECTO.Contexts
 {
-    public class ProjectsContext : DbContext
+    public class ProyectoContext : DbContext
     {
-        public ProjectsContext(DbContextOptions<ProjectsContext> options) : base(options)
-        {
-
-        }
+        public ProyectoContext(DbContextOptions<ProyectoContext> options) : base(options) { }
 
         public DbSet<Proyecto> Proyectos { get; set; }
         public DbSet<Tarea> Tareas { get; set; }

@@ -1,28 +1,34 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using PROIV_PROYECTO.Interface;
 using PROIV_PROYECTO.Models;
-using System.Security.Claims;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        public AuthenticationService(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, RoleManager<ApplicationRole> roleManager)
+
+        // Se crea el constructor
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<Permiso> roleManager;
+        private readonly SignInManager<ApplicationUser> signInManager;
+        public AuthenticationService(UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager, RoleManager<Permiso> _roleManager)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
-            _signInManager = signInManager;
+            userManager = _userManager;
+            roleManager = _roleManager;
+            signInManager = _signInManager;
         }
 
         // Metodo para Inicio de Sesion
-        public async Task<Status> LoginAsync(Login login)
+        public async Task<StatusDTO> IniciarSesionAsync(IniciarSesionDTO _iniciarSesionDTO)
         {
-            var status = new Status();
-            var user = await _userManager.FindByNameAsync(login.UserName!);
+            var status = new StatusDTO();
 
+            // Se busca al usuario
+            var user = await userManager.FindByNameAsync(_iniciarSesionDTO.UserName!);
+
+            // Si el usuario regresa nulo
             if (user == null)
             {
                 status.StatusCode = 0;
@@ -30,23 +36,29 @@ namespace PROIV_PROYECTO.Services
                 return status;
             }
 
-            if (!await _userManager.CheckPasswordAsync(user, login.Password!))
+            // Si la contraseña del usuario es invalida
+            if (!await userManager.CheckPasswordAsync(user, _iniciarSesionDTO.Contrasena!))
             {
                 status.StatusCode = 0;
                 status.Message = "Contraseña Invalida";
                 return status;
             }
 
-            var signInResult = await _signInManager.PasswordSignInAsync(user, login.Password!, false, true);
+            // Se inicia sesion
+            var signInResult = await signInManager.PasswordSignInAsync(user, _iniciarSesionDTO.Contrasena!, false, true);
 
             if (signInResult.Succeeded)
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
+                // Se busca los roles asociados al usuario
+                var userRoles = await userManager.GetRolesAsync(user);
+
+                // Se crea el Token de Inicio de Sesion
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName!),
                 };
 
+                // Se identificará el rol del usuario
                 foreach (var userRole in userRoles)
                 {
                     authClaims.Add(new Claim(ClaimTypes.Role, userRole));
@@ -70,17 +82,20 @@ namespace PROIV_PROYECTO.Services
         }
 
         // Metodo para Cerrar Sesion
-        public async Task LogoutAsync()
+        public async Task CerrarSesionAsync()
         {
-            await _signInManager.SignOutAsync();
+            await signInManager.SignOutAsync();
         }
 
-        // Metodo para Cambiar Contraseña desde Usuario
-        public async Task<Status> ChangePasswordAsync(ChangePassword changePassword, string username)
+        // Metodo para Cambiar Contraseña con la sesion iniciada
+        public async Task<StatusDTO> CambiarContrasenaAsync(CambiarContrasenaDTO _cambiarContrasenaDTO, string _userName)
         {
-            var status = new Status();
-            var user = await _userManager.FindByNameAsync(username);
+            var status = new StatusDTO();
 
+            // Se busca al usuario
+            var user = await userManager.FindByNameAsync(_userName);
+
+            // Si el usuario no fue encontrado
             if (user == null)
             {
                 status.Message = "El usuario no existe";
@@ -88,7 +103,8 @@ namespace PROIV_PROYECTO.Services
                 return status;
             }
 
-            var result = await _userManager.ChangePasswordAsync(user, changePassword.CurrentPassword!, changePassword.NewPassword!);
+            // Se procede a cambiar la contraseña
+            var result = await userManager.ChangePasswordAsync(user, _cambiarContrasenaDTO.ContrasenaActual!, _cambiarContrasenaDTO.ContrasenaNueva!);
 
             if (result.Succeeded)
             {

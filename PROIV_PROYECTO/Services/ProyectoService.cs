@@ -1,96 +1,124 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using PROIV_PROYECTO.Contexts;
 using PROIV_PROYECTO.Models;
 using PROIV_PROYECTO.Interface;
-using Microsoft.AspNetCore.Authorization;
-using System.Text.RegularExpressions;
-using System.Threading;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Services
 {
     public class ProyectoService : IProyectoService
     {
-        private readonly MvcDbContext _context;
+        private readonly ProyectoContext proyectoContext;
 
-        public ProyectoService(MvcDbContext context)
+        public ProyectoService(ProyectoContext _proyectoContext)
         {
-            _context = context;
+            proyectoContext = _proyectoContext;
         }
 
-        public async Task AddAsync(ProyectoNew proyectoNew)
+        public async Task NuevoProyectoAsync(ProyectoDTO _proyectoDTO)
         {
-            var newProyecto = new Proyecto()
+            // Se convierten los datos del modelo de ProyectoFormularioDTO a Proyecto
+            var nuevoProyecto = new Proyecto()
             {
-                Nombre = proyectoNew.Nombre,
-                Descripcion = proyectoNew.Descripcion,
-                FechaInicio = proyectoNew.FechaInicio,
-                EstadoId = proyectoNew.EstadoId
+                Nombre = _proyectoDTO.Nombre,
+                Descripcion = _proyectoDTO.Descripcion,
+                FechaInicio = _proyectoDTO.FechaInicio,
+                EstadoId = _proyectoDTO.EstadoId
             };
 
-            await _context.Proyectos.AddAsync(newProyecto);
-            await _context.SaveChangesAsync();
+            // Se añadirá el proyecto a la tabla
+            await proyectoContext.Proyectos.AddAsync(nuevoProyecto);
+
+            // Se guardarán los cambios en la base de datos
+            await proyectoContext.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int Id)
+        public async Task BorrarProyectoAsync(int _proyectoId)
         {
-            var result = await _context.Proyectos.FirstOrDefaultAsync(p => p.Id == Id);
-            _context.Proyectos.Remove(result);
-            await _context.SaveChangesAsync();
+            // Se buscar el proyecto a eliminar
+            var projectFound = await proyectoContext.Proyectos.FirstOrDefaultAsync(p => p.Id == _proyectoId);
+
+            // Se elimina el proyecto y las tareas asociadas al proyecto
+            proyectoContext.Proyectos.Remove(projectFound!);
+
+            // Se guardan los cambios en la base de datos
+            await proyectoContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ProyectoLista>> GetAllAsync(string SearchBy, string SearchString)
+        public async Task<IEnumerable<ProyectoListaDTO>> ObtenerProyectosAsync(string _filtrar, string _textoBusqueda)
         {
-            if (SearchBy == "Nombre")
+            string sqlQuery = "SELECT P.Id, P.Nombre, P.FechaInicio, E.NombreEstado, COUNT(T.Id) AS TareasAsignadas FROM Proyectos AS P LEFT JOIN Estados AS E ON P.EstadoId = E.Id LEFT JOIN Tareas AS T ON P.Id = T.ProyectoId ";
+            
+            // Verificaremos que los campos de filtracion no esten vacios
+            if (!string.IsNullOrEmpty(_textoBusqueda) && !string.IsNullOrEmpty(_filtrar))
             {
-                var result = await _context.ProyectoListas.FromSqlRaw("SELECT P.Id, P.Nombre, P.FechaInicio, E.NombreEstado, COUNT(T.Id) AS TareasAsignadas FROM Proyectos AS P LEFT JOIN Estados AS E ON P.EstadoId = E.Id LEFT JOIN Tareas AS T ON P.Id = T.ProyectoId WHERE P.Nombre LIKE '%" + SearchString + "%' GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado").ToListAsync();
-                return result;
+                if (_filtrar == "Nombre")
+                {
+                    sqlQuery += "WHERE P.Nombre LIKE '%" + _textoBusqueda + "%' ";
+                }
+                else if (_filtrar == "Estado")
+                {
+                    sqlQuery += "WHERE E.NombreEstado LIKE '%" + _textoBusqueda + "%' ";
+                }
             }
-            else if (SearchBy == "Estado")
-            {
-                var result = await _context.ProyectoListas.FromSqlRaw("SELECT P.Id, P.Nombre, P.FechaInicio, E.NombreEstado, COUNT(T.Id) AS TareasAsignadas FROM Proyectos AS P LEFT JOIN Estados AS E ON P.EstadoId = E.Id LEFT JOIN Tareas AS T ON P.Id = T.ProyectoId WHERE E.NombreEstado LIKE '%" + SearchString + "%' GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado").ToListAsync();
-                return result;
-            }
-            else
-            {
-                var result = await _context.ProyectoListas.FromSqlRaw("SELECT P.Id, P.Nombre, P.FechaInicio, E.NombreEstado, COUNT(T.Id) AS TareasAsignadas FROM Proyectos AS P LEFT JOIN Estados AS E ON P.EstadoId = E.Id LEFT JOIN Tareas AS T ON P.Id = T.ProyectoId GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado").ToListAsync();
-                return result;
-            }
+
+            sqlQuery += "GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado";
+
+            // Mandamos la consulta a la base de datos y esperamos respuesta
+            var listaProyecto = await proyectoContext.ProyectoListas
+                .FromSqlRaw(sqlQuery)
+                .ToListAsync();
+
+            return listaProyecto;
         }
 
-        public async Task<Proyecto> GetByIdAsync(int Id)
+        public async Task<ProyectoDTO> ObtenerProyectoIdAsync(int _proyectoId)
         {
-            var result = await _context.Proyectos
+            // Buscamos el proyecto
+            var proyectoEncontrado = await proyectoContext.Proyectos
                 .Include(e => e.Estado)
-                .FirstOrDefaultAsync(p => p.Id == Id);
+                .FirstOrDefaultAsync(p => p.Id == _proyectoId);
+
+            // Lo convertimos a ProyectoDTO
+            var proyectoDTO = new ProyectoDTO()
+            {
+                Id = proyectoEncontrado.Id,
+                Nombre = proyectoEncontrado.Nombre,
+                Descripcion = proyectoEncontrado.Descripcion,
+                FechaInicio = proyectoEncontrado.FechaInicio,
+                EstadoId = proyectoEncontrado.EstadoId
+            };
+
+            return proyectoDTO;
+        }
+
+        public async Task<IList<ProyectoDetalleDTO>> ObtenerProyectoDetalleAsync(int _proyectoId)
+        {
+            var result = await proyectoContext.ProyectoDetalles.FromSqlRaw("SELECT P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado AS ProyectoEstado, T.Id as IdTarea, T.Nombre as TareaNombre, E.NombreEstado AS TareaEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM Proyectos AS P JOIN Tareas AS T ON P.Id = T.ProyectoId JOIN Estados AS PE ON P.EstadoId = PE.Id JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Id = " + _proyectoId + " GROUP BY P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado, T.Id, T.Nombre, E.NombreEstado").ToListAsync();
             return result;
         }
 
-        public async Task<IList<ProyectoDetalle>> GetByIdDetalleAsync(int Id)
+        public async Task ActualizarProyectoAsync(int _proyectoId, ProyectoDTO _proyectoDTO)
         {
-            var result = await _context.ProyectoDetalles.FromSqlRaw("SELECT P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado AS ProyectoEstado, T.Id as IdTarea, T.Nombre as TareaNombre, E.NombreEstado AS TareaEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM Proyectos AS P JOIN Tareas AS T ON P.Id = T.ProyectoId JOIN Estados AS PE ON P.EstadoId = PE.Id JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Id = " + Id + " GROUP BY P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado, T.Id, T.Nombre, E.NombreEstado").ToListAsync();
-            return result;
-        }
-
-        public async Task UpdateAsync(int Id, ProyectoNew proyectoNew)
-        {
-            var dbProyecto = await _context.Proyectos.FirstOrDefaultAsync(n => n.Id == proyectoNew.Id);
+            var dbProyecto = await proyectoContext.Proyectos.FirstOrDefaultAsync(n => n.Id == _proyectoDTO.Id);
 
             if (dbProyecto != null)
             {
-                dbProyecto.Id = proyectoNew.Id;
-                dbProyecto.Nombre = proyectoNew.Nombre;
-                dbProyecto.Descripcion = proyectoNew.Descripcion;
-                dbProyecto.FechaInicio = proyectoNew.FechaInicio;
-                dbProyecto.EstadoId = proyectoNew.EstadoId;
-                await _context.SaveChangesAsync();
+                dbProyecto.Id = _proyectoDTO.Id;
+                dbProyecto.Nombre = _proyectoDTO.Nombre;
+                dbProyecto.Descripcion = _proyectoDTO.Descripcion;
+                dbProyecto.FechaInicio = _proyectoDTO.FechaInicio;
+                dbProyecto.EstadoId = _proyectoDTO.EstadoId;
+
+                await proyectoContext.SaveChangesAsync();
             }
         }
 
-        public async Task<NewProyectoDropdowns> GetNewProyectoDropdownsValues()
+        public async Task<ProyectoDropdownDTO> ProyectoDropdownValues()
         {
-            var response = new NewProyectoDropdowns()
+            var response = new ProyectoDropdownDTO()
             {
-                Estados = await _context.Estados.OrderBy(n => n.NombreEstado).ToListAsync()
+                Estados = await proyectoContext.Estados.OrderBy(n => n.NombreEstado).ToListAsync()
             };
 
             return response;

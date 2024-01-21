@@ -1,10 +1,15 @@
-﻿using PROIV_PROYECTO.Models;
+﻿using PROIV_PROYECTO.ModelsDTO;
+using PROIV_PROYECTO.Models;
 
 namespace PROIV_PROYECTO.Interface
 {
     public interface IAuditoriaService
     {
-        Task<NewAuditoriaDropdowns> GetNewAuditoriaDropdownsValues();
-        Task<IEnumerable<Tarea>> GetAllAsync(int ProyectoId, int TareaId, int EstadoId, string UsuarioId);
+
+        // Desplegables que se usaran para filtraciones en la auditoria
+        Task<AuditoriaDropdownsDTO> AuditoriaDropdownsValues();
+
+        // Obtendremos todas las tareas y proyectos
+        Task<IEnumerable<Tarea>> ObtenerProyectosTareasAsync(int _proyectoId, int _tareaId, int _estadoId, string _usuarioId);
     }
 }

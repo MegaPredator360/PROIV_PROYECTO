@@ -7,11 +7,5 @@ namespace PROIV_PROYECTO.Models
     {
         public string? IdNumber { get; set; }
         public string? FullName { get; set; }
-
-    }
-
-    public class ApplicationRole : IdentityRole
-    {
-
     }
 }

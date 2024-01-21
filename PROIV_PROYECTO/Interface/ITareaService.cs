@@ -1,17 +1,14 @@
-﻿using PROIV_PROYECTO.Models;
+﻿using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Interface
 {
     public interface ITareaService
     {
-        Task<IEnumerable<TareaLista>> GetAllAsync(string SearchBy, string SearchString);
-
-        Task<IEnumerable<TareaUsuarioLista>> GetAllUserAsync(string SearchBy, string SearchString, string username);
-        Task<Tarea> GetByIdAsync(int Id);
-        Task AddAsync(TareaNew tareaNew);
-        Task UpdateAsync(int Id, TareaNew newTarea);
-        Task UpdateUsuarioAsync(int Id, Tarea tarea);
-        Task DeleteAsync(int Id);
-        Task<NewTareaDropdowns> GetNewTareaDropdownsValues();
+        Task<IEnumerable<TareaListaDTO>> ObtenerTareaAsync(string _filtrar, string _textoBusqueda);
+        Task<TareaDTO> ObtenerTareaIdAsync(int _tareaId);
+        Task NuevaTareaAsync(TareaDTO _tareaDTO);
+        Task ActualizarTareaAsync(int _tareaId, TareaDTO _tareaDTO);
+        Task BorrarTareaAsync(int _tareaId);
+        Task<TareaDropdownDTO> TareaDropdownValues();
     }
 }
