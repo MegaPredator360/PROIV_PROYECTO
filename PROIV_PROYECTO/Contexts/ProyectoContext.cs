@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PROIV_PROYECTO.Models;
-using static System.Net.Mime.MediaTypeNames;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Contexts
 {
@@ -13,10 +13,10 @@ namespace PROIV_PROYECTO.Contexts
         public DbSet<TareaUsuario> TareasUsuarios { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Estado> Estados { get; set; }
-        public DbSet<TareaLista> TareaListas { get; set; }
-        public DbSet<TareaUsuarioLista> TareaUsuarioListas { get; set; }
-        public DbSet<ProyectoLista> ProyectoListas { get; set; }
-        public DbSet<ProyectoDetalle> ProyectoDetalles { get; set; }
+        public DbSet<TareaListaDTO> TareaListaDTO { get; set; }
+        public DbSet<TareaUsuarioListaDTO> TareaUsuarioListaDTO { get; set; }
+        public DbSet<ProyectoListaDTO> ProyectoListaDTO { get; set; }
+        public DbSet<ProyectoDetalleDTO> ProyectoDetalleDTO { get; set; }
 
         protected override void OnModelCreating(ModelBuilder _builder)
         {
@@ -32,10 +32,10 @@ namespace PROIV_PROYECTO.Contexts
             _builder.Entity<TareaUsuario>().HasOne(t => t.Tarea).WithMany(ut => ut.TareasUsuarios).HasForeignKey(t => t.TareaId);
 
             // Indicamos que se ignoren estos modelos ya que solo son usado para mover informacion del Frontend and Backend
-            _builder.Ignore<TareaNew>();
-            _builder.Ignore<NewTareaDropdowns>();
-            _builder.Ignore<NewProyectoDropdowns>();
-            _builder.Ignore<ProyectoNew>();
+            _builder.Ignore<TareaDTO>();
+            _builder.Ignore<TareaDropdownDTO>();
+            _builder.Ignore<ProyectoDropdownDTO>();
+            _builder.Ignore<ProyectoDTO>();
 
             // Indicamos que el modelo usuario hará uso de la tabla AspNetUsers que es generada en el contexto de UserIdentityContext
             _builder.Entity<Usuario>().ToTable("AspNetUsers");

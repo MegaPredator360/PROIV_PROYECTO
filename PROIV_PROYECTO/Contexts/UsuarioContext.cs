@@ -1,12 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PROIV_PROYECTO.Models;
-using System.Data;
-using System.Reflection.Emit;
-using System.Threading;
 
 namespace PROIV_PROYECTO.Contexts
 {
