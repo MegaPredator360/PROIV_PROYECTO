@@ -10,13 +10,11 @@ namespace PROIV_PROYECTO.Services
     {
 
         // Se crea el constructor
-        private readonly UserManager<ApplicationUser> userManager;
-        private readonly RoleManager<Permiso> roleManager;
-        private readonly SignInManager<ApplicationUser> signInManager;
-        public AuthenticationService(UserManager<ApplicationUser> _userManager, SignInManager<ApplicationUser> _signInManager, RoleManager<Permiso> _roleManager)
+        private readonly UserManager<Usuario> userManager;
+        private readonly SignInManager<Usuario> signInManager;
+        public AuthenticationService(UserManager<Usuario> _userManager, SignInManager<Usuario> _signInManager)
         {
             userManager = _userManager;
-            roleManager = _roleManager;
             signInManager = _signInManager;
         }
 

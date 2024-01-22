@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ProyectoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Validar Identidad de Usuario
-builder.Services.AddIdentity<ApplicationUser, Permiso>()
+builder.Services.AddIdentity<Usuario, Permiso>()
     .AddEntityFrameworkStores<ProyectoContext>()
     .AddDefaultTokenProviders();
 

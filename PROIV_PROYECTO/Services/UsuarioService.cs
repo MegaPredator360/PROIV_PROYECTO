@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PROIV_PROYECTO.Contexts;
 using PROIV_PROYECTO.Interface;
 using PROIV_PROYECTO.Models;
@@ -8,12 +9,12 @@ namespace PROIV_PROYECTO.Services
 {
     public class UsuarioService : IUsuarioService
     {
-        public readonly UserManager<ApplicationUser> userManager;
+        public readonly UserManager<Usuario> userManager;
         public readonly RoleManager<Permiso> roleManager;
-        public readonly SignInManager<ApplicationUser> signInManager;
+        public readonly SignInManager<Usuario> signInManager;
         public readonly ProyectoContext proyectoContext;
 
-        public UsuarioService(UserManager<ApplicationUser> _userManager, RoleManager<Permiso> _roleManager, SignInManager<ApplicationUser> _signInManager, ProyectoContext _proyectoContext)
+        public UsuarioService(UserManager<Usuario> _userManager, RoleManager<Permiso> _roleManager, SignInManager<Usuario> _signInManager, ProyectoContext _proyectoContext)
         {
             userManager = _userManager;
             roleManager = _roleManager;
@@ -22,8 +23,22 @@ namespace PROIV_PROYECTO.Services
         }
         
         // Obtener todos los usuarios para index
-        public IEnumerable<UsuarioListaDTO> ObtenerUsuario(string _filtrar, string _textoBusqueda)
+        public async Task<IEnumerable<UsuarioListaDTO>> ObtenerUsuario(string _filtrar, string _textoBusqueda)
         {
+            IEnumerable<Usuario> listaUsuario = await proyectoContext.Usuarios.ToListAsync();
+
+            IEnumerable<UsuarioListaDTO> usuarioDTO = listaUsuario.Select(p => new UsuarioListaDTO
+            {
+                Id = p.Id,
+                IdNumber = p.IdNumber,
+                FullName = p.FullName,
+                Email = p.Email,
+                UserName = p.UserName,
+                Role = "N/A"
+            }).ToList();
+
+            return usuarioDTO;
+            /*
             if (_filtrar == "Nombre")
             {
                 var result2 = proyectoContext.Users
@@ -96,6 +111,7 @@ namespace PROIV_PROYECTO.Services
                 
                 return result2;
             }
+            */
         }
 
         // Añadir Usuarios
@@ -116,7 +132,7 @@ namespace PROIV_PROYECTO.Services
             }
 
             // Se convierten los datos a ApplicationUser
-            ApplicationUser usuarioNuevo = new ApplicationUser()
+            Usuario usuarioNuevo = new Usuario()
             {
                 Email = _usuarioDTO.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),

@@ -15,9 +15,9 @@ namespace PROIV_PROYECTO.Controllers
         // ---------- Constructor
         private readonly ITareaUsuarioService tuService;
         private readonly ITareaService tareaService;
-        private readonly UserManager<ApplicationUser> userManager;
+        private readonly UserManager<Usuario> userManager;
 
-        public TareaUsuarioController(ITareaUsuarioService _tuService, TareaService _tareaService, UserManager<ApplicationUser> _userManager)
+        public TareaUsuarioController(ITareaUsuarioService _tuService, TareaService _tareaService, UserManager<Usuario> _userManager)
         {
             tuService = _tuService;
             tareaService = _tareaService;

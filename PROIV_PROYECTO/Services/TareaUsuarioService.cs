@@ -10,12 +10,10 @@ namespace PROIV_PROYECTO.Services
     public class TareaUsuarioService : ITareaUsuarioService
     {
         private readonly ProyectoContext proyectoContext;
-        private readonly UserManager<ApplicationUser> userManager;
 
-        public TareaUsuarioService(ProyectoContext _proyectoContext, UserManager<ApplicationUser> _userManager)
+        public TareaUsuarioService(ProyectoContext _proyectoContext)
         {
             proyectoContext = _proyectoContext;
-            userManager = _userManager;
         }
         public async Task<IEnumerable<TareaUsuarioListaDTO>> ObtenerTareaUsuarioAsync(string _filtrar, string _textoBusqueda, string _userName)
         {

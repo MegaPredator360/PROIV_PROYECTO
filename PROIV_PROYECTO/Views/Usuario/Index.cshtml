@@ -34,7 +34,7 @@
         {
             <div class="title-index">
                 <h1>
-                    No hay usuarios registrados
+                    No hay tareas registradas
                 </h1>
             </div>
         }
@@ -44,21 +44,22 @@
                 <tr>
                     <th class="th-proy">Cedula</th>
                     <th class="th-proy">Nombre</th>
-                    <th class="th-proy">Correo</th>
-                    <th class="th-proy">Usuario</th>
+                    <th class="th-proy">Correo Electronico</th>
+                    <th class="th-proy">Nombre de Usuario</th>
                     <th class="th-proy">Permisos</th>
                 </tr>
-                @foreach (var user in Model)
+                @foreach (var tarea in Model)
                 {
                     <tr>
-                        <td>@Html.DisplayFor(modelItem=>user.IdNumber)</td>
-                        <td>@Html.DisplayFor(modelItem=>user.FullName)</td>
-                        <td>@Html.DisplayFor(modelItem=>user.Email)</td>
-                        <td>@Html.DisplayFor(modelItem=>user.UserName)</td>
-                        <td>@Html.DisplayFor(modelItem=>user.Role)</td>
-                        <td class="td-opciones2">
-                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Actualizar" asp-route-id="@user.Id">Editar</a>
-                            <a class="custom-btn btn-danger btn-margin2" type="submit" asp-action="Borrar" asp-route-id="@user.Id">Borrar</a>
+                        <td>@Html.DisplayFor(modelItem => tarea.IdNumber)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.FullName)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.Email)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.UserName)</td>
+                        <td>@Html.DisplayFor(modelItem => tarea.Role)</td>
+                        <td class="td-opciones">
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Update" asp-route-id="@tarea.Id">Editar</a>
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Details" asp-route-id="@tarea.Id">Detalles</a>
+                            <a class="custom-btn btn-danger btn-margin2" type="submit" asp-action="Delete" asp-route-id="@tarea.Id">Borrar</a>
                         </td>
                     </tr>
                 }

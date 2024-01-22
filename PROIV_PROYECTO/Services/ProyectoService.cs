@@ -47,30 +47,18 @@ namespace PROIV_PROYECTO.Services
 
         public async Task<IEnumerable<ProyectoListaDTO>> ObtenerProyectosAsync(string _filtrar, string _textoBusqueda)
         {
-            string sqlQuery = "SELECT P.Id, P.Nombre, P.FechaInicio, E.NombreEstado, COUNT(T.Id) AS TareasAsignadas FROM Proyectos AS P LEFT JOIN Estados AS E ON P.EstadoId = E.Id LEFT JOIN Tareas AS T ON P.Id = T.ProyectoId ";
-            
-            // Verificaremos que los campos de filtracion no esten vacios
-            if (!string.IsNullOrEmpty(_textoBusqueda) && !string.IsNullOrEmpty(_filtrar))
+            IEnumerable<Proyecto> listaProyectos = await proyectoContext.Proyectos.ToListAsync();
+
+            IEnumerable<ProyectoListaDTO> proyectosDTO = listaProyectos.Select(p => new ProyectoListaDTO
             {
-                if (_filtrar == "Nombre")
-                {
-                    sqlQuery += "WHERE P.Nombre LIKE '%" + _textoBusqueda + "%' ";
-                }
-                else if (_filtrar == "Estado")
-                {
-                    sqlQuery += "WHERE E.NombreEstado LIKE '%" + _textoBusqueda + "%' ";
-                }
-            }
+                Id = p.Id,
+                Nombre = p.Nombre,
+                FechaInicio = p.FechaInicio,
+                NombreEstado = p.EstadoId.ToString(),
+                TareasAsignadas = 0
+            }).ToList();
 
-            sqlQuery += "GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado";
-
-            // Mandamos la consulta a la base de datos y esperamos respuesta
-            var listaProyecto = await proyectoContext.Proyectos
-                .FromSqlRaw(sqlQuery).ToListAsync();
-
-            IEnumerable<ProyectoListaDTO> tareaListaDTOs = listaProyecto.ConvertAll(x => (ProyectoListaDTO)x);
-
-            return tareaListaDTOs;
+            return proyectosDTO;
         }
 
         public async Task<ProyectoDTO> ObtenerProyectoIdAsync(int _proyectoId)

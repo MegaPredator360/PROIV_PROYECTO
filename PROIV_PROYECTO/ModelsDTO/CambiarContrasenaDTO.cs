@@ -12,7 +12,7 @@ namespace PROIV_PROYECTO.ModelsDTO
         public string? ContrasenaNueva { get; set; }
 
         [Required(ErrorMessage = "Debes de confirmar la nueva contraseña")]
-        [Compare("NewPassword", ErrorMessage = "Las contraseñas no son iguales")]
+        [Compare("ContrasenaNueva", ErrorMessage = "Las contraseñas no son iguales")]
         public string? ContrasenaConfirmar { get; set; }
     }
 }

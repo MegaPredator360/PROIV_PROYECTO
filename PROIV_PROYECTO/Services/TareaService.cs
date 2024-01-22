@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using PROIV_PROYECTO.Models;
 using PROIV_PROYECTO.Interface;
 using PROIV_PROYECTO.Contexts;
@@ -11,7 +10,7 @@ namespace PROIV_PROYECTO.Services
     {
         private readonly ProyectoContext proyectoContext;
 
-        public TareaService(ProyectoContext _proyectoContext, UserManager<ApplicationUser> _userManager)
+        public TareaService(ProyectoContext _proyectoContext)
         {
             proyectoContext = _proyectoContext;
         }
@@ -56,34 +55,18 @@ namespace PROIV_PROYECTO.Services
 
         public async Task<IEnumerable<TareaListaDTO>> ObtenerTareaAsync(string _filtrar, string _textoBusqueda)
         {
-            if (_filtrar == "Nombre")
-            {
-                var result = await proyectoContext.Tareas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE T.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
-                IEnumerable<TareaListaDTO> tareaListaDTOs = result.ConvertAll(x => (TareaListaDTO)x);
+            IEnumerable<Tarea> listaTareas = await proyectoContext.Tareas.ToListAsync();
 
-                return tareaListaDTOs;
-            }
-            else if (_filtrar == "Proyecto")
+            IEnumerable<TareaListaDTO> tareaDTO = listaTareas.Select(p => new TareaListaDTO
             {
-                var result = await proyectoContext.Tareas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Nombre LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
-                IEnumerable<TareaListaDTO> tareaListaDTOs = result.ConvertAll(x => (TareaListaDTO)x);
+                Id = p.Id,
+                Nombre = p.Nombre,
+                NombreEstado = p.EstadoId.ToString(),
+                NombreProyecto = "N/A",
+                PersonasAsignadas = 0
+            }).ToList();
 
-                return tareaListaDTOs;
-            }
-            else if (_filtrar == "Estado")
-            {
-                var result = await proyectoContext.Tareas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE E.NombreEstado LIKE '%" + _textoBusqueda + "%' GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
-                IEnumerable<TareaListaDTO> tareaListaDTOs = result.ConvertAll(x => (TareaListaDTO)x);
-
-                return tareaListaDTOs;
-            }
-            else
-            {
-                var result = await proyectoContext.Tareas.FromSqlRaw("SELECT T.Id, T.Nombre, P.Nombre AS NombreProyecto, E.NombreEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM TAREAS AS T LEFT JOIN Proyectos AS P ON T.ProyectoId = P.Id LEFT JOIN Estados AS E ON T.EstadoId = E.Id LEFT JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId GROUP BY T.Id, T.Nombre, P.Nombre, E.NombreEstado").ToListAsync();
-                IEnumerable<TareaListaDTO> tareaListaDTOs = result.ConvertAll(x => (TareaListaDTO)x);
-
-                return tareaListaDTOs;
-            }
+            return tareaDTO;
         }
 
         public async Task<TareaDTO> ObtenerTareaIdAsync(int _tareaId)

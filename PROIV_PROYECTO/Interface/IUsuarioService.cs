@@ -5,7 +5,7 @@ namespace PROIV_PROYECTO.Interface
 {
     public interface IUsuarioService
     {
-        IEnumerable<UsuarioListaDTO> ObtenerUsuario(string _filtrar, string _textoBusqueda);
+        Task<IEnumerable<UsuarioListaDTO>> ObtenerUsuario(string _filtrar, string _textoBusqueda);
         UsuarioDTO ObtenerUsuarioId(string _usuarioId);
 
         UsuarioDTO ObtenerUsuarioBorrarId(string _usuarioId);

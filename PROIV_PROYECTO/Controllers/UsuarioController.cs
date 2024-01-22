@@ -16,11 +16,11 @@ namespace PROIV_PROYECTO.Controllers
         }
 
         // Vista de Index para Usuarios
-        public IActionResult Index(string _filtrar, string _textoBusqueda)
+        public async Task<IActionResult> Index(string _filtrar, string _textoBusqueda)
         {
             ViewData["CurrentSearch"] = _textoBusqueda;
 
-            var data = usuarioService.ObtenerUsuario(_filtrar, _textoBusqueda);
+            var data = await usuarioService.ObtenerUsuario(_filtrar, _textoBusqueda);
             return View(data);
         }
 
