@@ -8,12 +8,12 @@ using PROIV_PROYECTO.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Se identifican los contextos a utilizar para la base de datos
-builder.Services.AddDbContext<UserIdentityContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<ProjectsContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<UsuarioContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ProyectoContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Validar Identidad de Usuario
-builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
-    .AddEntityFrameworkStores<UserIdentityContext>()
+builder.Services.AddIdentity<ApplicationUser, Permiso>()
+    .AddEntityFrameworkStores<UsuarioContext>()
     .AddDefaultTokenProviders();
 
 // Add services to the container.

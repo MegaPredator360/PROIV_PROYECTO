@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PROIV_PROYECTO.Models;
 
 namespace PROIV_PROYECTO.ModelsDTO
 {
@@ -23,5 +24,8 @@ namespace PROIV_PROYECTO.ModelsDTO
         [Display(Name = "Estado")]
         [ForeignKey("EstadoId")]
         public int EstadoId { get; set; }
+
+        public List<Tarea> Tareas { get; set; } = null!;
+        public Estado Estado { get; set; } = null!;
     }
 }

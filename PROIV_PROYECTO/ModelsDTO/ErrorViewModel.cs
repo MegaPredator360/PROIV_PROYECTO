@@ -1,4 +1,4 @@
-namespace PROIV_PROYECTO.Models
+namespace PROIV_PROYECTO.ModelsDTO
 {
     public class ErrorViewModel
     {

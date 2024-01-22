@@ -14,7 +14,8 @@ namespace PROIV_PROYECTO.Models
 
         [ForeignKey("EstadoId")]
         public int EstadoId { get; set; }
-        public List<Tarea> Tareas { get; set; } = null!;
+
+		public List<Tarea> Tareas { get; set; } = null!;
         public Estado Estado { get; set; } = null!;
     }
 }

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PROIV_PROYECTO.Models;
 
 namespace PROIV_PROYECTO.ModelsDTO
 {
@@ -25,5 +26,12 @@ namespace PROIV_PROYECTO.ModelsDTO
 
         [Required(ErrorMessage = "Se necesitan asignar Usuarios a la tarea")]
         public List<string>? AssignedUsersId { get; set; }
+
+        public List<TareaUsuario> TareasUsuarios { get; set; } = null!;
+
+        public Proyecto Proyecto { get; set; } = null!;
+        public Estado Estado { get; set; } = null!;
+
+
     }
 }

@@ -1,4 +1,4 @@
-﻿@model TareaNew
+﻿@model TareaDTO
 @{
     ViewData["Title"] = "Asignar Tarea";
 }
@@ -29,10 +29,10 @@
                     <div class="select-estado">
                         <select asp-for="EstadoId" asp-items="ViewBag.Estados"></select>
                     </div>
-                    <span asp-validation-for="UserIds" class="text-danger"></span>
+                    <span asp-validation-for="AssignedUsersId" class="text-danger"></span>
                     <h3>Usuarios a asginar Tarea:</h3>
                     <div class="select-estado">
-                        <select asp-for="UserIds" asp-items="ViewBag.Usuarios" multiple></select>
+                        <select asp-for="AssignedUsersId" asp-items="ViewBag.Usuarios" multiple></select>
                     </div>
                 </div>
                 <div class="right-side">

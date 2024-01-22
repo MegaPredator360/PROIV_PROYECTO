@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using PROIV_PROYECTO.Models;
+using PROIV_PROYECTO.ModelsDTO;
 using PROIV_PROYECTO.Interface;
 using System.Diagnostics;
 
