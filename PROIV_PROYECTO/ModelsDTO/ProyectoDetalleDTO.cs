@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PROIV_PROYECTO.Models;
 
 namespace PROIV_PROYECTO.ModelsDTO
 {
@@ -14,5 +15,10 @@ namespace PROIV_PROYECTO.ModelsDTO
         public string? TareaNombre { get; set; }
         public string? TareaEstado { get; set; }
         public Int32 PersonasAsignadas { get; set; }
+
+        public static explicit operator ProyectoDetalleDTO(Proyecto v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

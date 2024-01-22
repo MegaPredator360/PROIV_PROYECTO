@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using PROIV_PROYECTO.Models;
 
 namespace PROIV_PROYECTO.ModelsDTO
 {
@@ -12,5 +13,10 @@ namespace PROIV_PROYECTO.ModelsDTO
         public string? NombreEstado { get; set; }
 
         public string? NombreProyecto { get; set; }
+
+        public static explicit operator TareaUsuarioListaDTO(TareaUsuario v)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

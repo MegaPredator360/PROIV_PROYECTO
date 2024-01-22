@@ -65,11 +65,12 @@ namespace PROIV_PROYECTO.Services
             sqlQuery += "GROUP BY P.Id, P.Nombre, P.FechaInicio, E.NombreEstado";
 
             // Mandamos la consulta a la base de datos y esperamos respuesta
-            var listaProyecto = await proyectoContext.ProyectoListaDTOs
-                .FromSqlRaw(sqlQuery)
-                .ToListAsync();
+            var listaProyecto = await proyectoContext.Proyectos
+                .FromSqlRaw(sqlQuery).ToListAsync();
 
-            return listaProyecto;
+            IEnumerable<ProyectoListaDTO> tareaListaDTOs = listaProyecto.ConvertAll(x => (ProyectoListaDTO)x);
+
+            return tareaListaDTOs;
         }
 
         public async Task<ProyectoDTO> ObtenerProyectoIdAsync(int _proyectoId)
@@ -94,8 +95,11 @@ namespace PROIV_PROYECTO.Services
 
         public async Task<IList<ProyectoDetalleDTO>> ObtenerProyectoDetalleAsync(int _proyectoId)
         {
-            var result = await proyectoContext.ProyectoDetalleDTOs.FromSqlRaw("SELECT P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado AS ProyectoEstado, T.Id as IdTarea, T.Nombre as TareaNombre, E.NombreEstado AS TareaEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM Proyectos AS P JOIN Tareas AS T ON P.Id = T.ProyectoId JOIN Estados AS PE ON P.EstadoId = PE.Id JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Id = " + _proyectoId + " GROUP BY P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado, T.Id, T.Nombre, E.NombreEstado").ToListAsync();
-            return result;
+            var result = await proyectoContext.Proyectos.FromSqlRaw("SELECT P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado AS ProyectoEstado, T.Id as IdTarea, T.Nombre as TareaNombre, E.NombreEstado AS TareaEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM Proyectos AS P JOIN Tareas AS T ON P.Id = T.ProyectoId JOIN Estados AS PE ON P.EstadoId = PE.Id JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Id = " + _proyectoId + " GROUP BY P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado, T.Id, T.Nombre, E.NombreEstado").ToListAsync();
+            
+            IList<ProyectoDetalleDTO> tareaListaDTOs = result.ConvertAll(x => (ProyectoDetalleDTO)x);
+
+            return tareaListaDTOs;
         }
 
         public async Task ActualizarProyectoAsync(int _proyectoId, ProyectoDTO _proyectoDTO)
