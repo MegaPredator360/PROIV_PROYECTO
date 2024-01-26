@@ -1,6 +1,6 @@
 using PROIV_PROYECTO.Models;
 
-namespace PROIV_PROYECTO.ModelsDTO
+namespace PROIV_PROYECTO.ModelsDTO.ProyectoDTO
 {
     public class ProyectoDropdownDTO
     {

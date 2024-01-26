@@ -9,10 +9,12 @@ namespace PROIV_PROYECTO.Services
     public class TareaService : ITareaService
     {
         private readonly ProyectoContext proyectoContext;
+        private readonly UsuarioContext usuarioContext;
 
-        public TareaService(ProyectoContext _proyectoContext)
+        public TareaService(ProyectoContext _proyectoContext, UsuarioContext _usuarioContext)
         {
             proyectoContext = _proyectoContext;
+            usuarioContext = _usuarioContext;
         }
 
         public async Task NuevaTareaAsync(TareaDTO _tareaDTO)
@@ -140,7 +142,7 @@ namespace PROIV_PROYECTO.Services
             {
                 Proyectos = await proyectoContext.Proyectos.OrderBy(n => n.Nombre).ToListAsync(),
                 Estados = await proyectoContext.Estados.OrderBy(n => n.NombreEstado).ToListAsync(),
-                Usuarios = await proyectoContext.Usuarios.OrderBy(n => n.FullName).ToListAsync(),
+                Usuarios = await usuarioContext.Usuarios.OrderBy(n => n.FullName).ToListAsync(),
             };
 
             return response;

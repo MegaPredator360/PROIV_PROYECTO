@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PROIV_PROYECTO.Models;
 
-namespace PROIV_PROYECTO.ModelsDTO
+namespace PROIV_PROYECTO.ModelsDTO.ProyectoDTO
 {
     [Keyless]
     public class ProyectoListaDTO
@@ -9,7 +8,8 @@ namespace PROIV_PROYECTO.ModelsDTO
         public int Id { get; set; }
         public string? Nombre { get; set; }
         public string? FechaInicio { get; set; }
-        public string? NombreEstado { get; set; }
-        public Int32 TareasAsignadas { get; set; }
+        public int EstadoId { get; set; }
+        public int TareasAsignadas { get; set; }
+        public EstadoDTO? EstadoDTOs { get; set; }
     }
 }

@@ -11,11 +11,13 @@ namespace PROIV_PROYECTO.Services
 
         // Creamos una variable que hará uso de contexto
         private readonly ProyectoContext proyectoContext;
+        private readonly UsuarioContext usuarioContext;
 
         // Constructor
-        public AuditoriaService(ProyectoContext _proyectoContext)
+        public AuditoriaService(ProyectoContext _proyectoContext, UsuarioContext _usuarioContext)
         {
             proyectoContext = _proyectoContext;
+            usuarioContext = _usuarioContext;
         }
 
         // Desplegables que se usaran para filtraciones en la auditoria
@@ -26,7 +28,7 @@ namespace PROIV_PROYECTO.Services
                 Proyectos = await proyectoContext.Proyectos.OrderBy(n => n.Nombre).ToListAsync(),
                 Tareas = await proyectoContext.Tareas.OrderBy(n => n.Nombre).ToListAsync(),
                 Estados = await proyectoContext.Estados.OrderBy(n => n.NombreEstado).ToListAsync(),
-                Usuarios = await proyectoContext.Usuarios.OrderBy(n => n.FullName).ToListAsync(),
+                Usuarios = await usuarioContext.Usuarios.OrderBy(n => n.FullName).ToListAsync(),
             };
 
             return response;

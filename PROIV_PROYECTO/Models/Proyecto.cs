@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using PROIV_PROYECTO.ModelsDTO.ProyectoDTO;
+using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Models
 {

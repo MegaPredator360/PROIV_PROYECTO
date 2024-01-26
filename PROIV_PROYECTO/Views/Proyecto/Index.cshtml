@@ -12,15 +12,18 @@
     <div class="contenido">
         <form asp-action="Index" method="get">
             <div class="group-buscar">
-                <input type="text" class="input-text" name="SearchString" value="@ViewData["CurrentSearch"]" required>
+                <input type="text" class="input-text" name="_nombreProyecto" value="@ViewData["buscarProyecto"]">
                 <span class="bar"></span>
-                <label class="label-text">Buscar</label>
+                <label class="label-text">Buscar Proyecto</label>
             </div>
         <div class="align-right">
             <div class="select">
-                <select name="SearchBy">
-                    <option value="Nombre">Nombre</option>
-                    <option value="Estado">Estado</option>
+                <select name="_estadoId">
+                    <option value="0">-- Seleccionar Estado --</option>
+                    <option value="1">Completado</option>
+                    <option value="2">Cancelado</option>
+                    <option value="3">Retrasado</option>
+                    <option value="4">En Proceso</option>
                 </select>
             </div>
                 <button class="custom-btn btn-info btn-margin1" type="submit">Buscar</button>
@@ -51,18 +54,11 @@
                     <tr>
                         <td>@Html.DisplayFor(modelItem => proyecto.Nombre)</td>
                         <td>@Html.DisplayFor(modelItem => proyecto.FechaInicio)</td>
-                        <td>@Html.DisplayFor(modelItem => proyecto.NombreEstado)</td>
+                        <td>@Html.DisplayFor(modelItem => proyecto.EstadoDTOs!.NombreEstado)</td>
                         <td>@Html.DisplayFor(modelItem => proyecto.TareasAsignadas)</td>
                         <td class="td-opciones">
                             <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Update" asp-route-id="@proyecto.Id">Editar</a>
-                            @if (proyecto.TareasAsignadas == 0)
-                            {
-                                <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Details" asp-route-id="@proyecto.Id">Detalles</a>
-                            }
-                            else
-                            {
-                                <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="DetailsTarea" asp-route-id="@proyecto.Id">Detalles</a>
-                            }
+                            <a class="custom-btn btn-info btn-margin2" type="submit" asp-action="Details" asp-route-id="@proyecto.Id">Detalles</a>
                             <a class="custom-btn btn-danger btn-margin2" type="submit" asp-action="Delete" asp-route-id="@proyecto.Id">Borrar</a>
                         </td>
                     </tr>

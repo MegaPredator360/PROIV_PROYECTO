@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using PROIV_PROYECTO.ModelsDTO;
 using PROIV_PROYECTO.Interface;
 using Microsoft.AspNetCore.Authorization;
+using PROIV_PROYECTO.ModelsDTO.ProyectoDTO;
 
 namespace PROIV_PROYECTO.Controllers
 {
@@ -18,12 +18,12 @@ namespace PROIV_PROYECTO.Controllers
         }
 
         // Carga de Index
-        public async Task<IActionResult> Index(string _filtrar, string _textoBusqueda)
+        public async Task<IActionResult> Index(string _nombreProyecto, int _estadoId)
         {
-            ViewData["CurrentSearch"] = _filtrar;
+            ViewData["buscarProyecto"] = _nombreProyecto;
 
             // Se utilizara para filtrar los datos
-            var data = await proyectoService.ObtenerProyectosAsync(_filtrar, _textoBusqueda);
+            var data = await proyectoService.ObtenerProyectosAsync(_nombreProyecto, _estadoId);
             return View(data);
         }
 
@@ -40,7 +40,7 @@ namespace PROIV_PROYECTO.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(ProyectoDTO _proyectoDTO)
+        public async Task<IActionResult> Create(ProyectoFormularioDTO _proyectoDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -55,32 +55,23 @@ namespace PROIV_PROYECTO.Controllers
         }
 
         // Vista para Actualizar
-        public async Task<IActionResult> Update(int _proyectoId)
+        public async Task<IActionResult> Update(int Id)
         {
-            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(Id);
 
             if (proyectoDetalle == null)
             {
                 return View("NotFound");
             }
 
-            var response = new ProyectoDTO()
-            {
-                Id = proyectoDetalle.Id,
-                Nombre = proyectoDetalle.Nombre,
-                Descripcion = proyectoDetalle.Descripcion,
-                FechaInicio = proyectoDetalle.FechaInicio,
-                EstadoId = proyectoDetalle.EstadoId
-            };
-
             var proyectoDropdown = await proyectoService.ProyectoDropdownValues();
             ViewBag.Estados = new SelectList(proyectoDropdown.Estados, "Id", "NombreEstado");
 
-            return View(response);
+            return View(proyectoDetalle);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int _proyectoId, ProyectoDTO _proyectoDTO)
+        public async Task<IActionResult> Update(int _proyectoId, ProyectoFormularioDTO _proyectoDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -94,34 +85,23 @@ namespace PROIV_PROYECTO.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // Vista para Detalles con Tareas
-        public async Task<IActionResult> DetailsTarea(int _proyectoId)
+        // Vista con Detalles
+        public async Task<IActionResult> Details(int Id)
         {
-            var proyectoDetalle = await proyectoService.ObtenerProyectoDetalleAsync(_proyectoId);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoDetalleAsync(Id);
 
             if (proyectoDetalle == null)
             {
                 return View("Error");
             }
 
-            return View(proyectoDetalle);
-        }
-
-        public async Task<IActionResult> Details(int _proyectoId)
-        {
-            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
-
-            if (proyectoDetalle == null)
-            {
-                return View("Error");
-            }
             return View(proyectoDetalle);
         }
 
         // Vista para Eliminar
-        public async Task<IActionResult> Delete(int _proyectoId)
+        public async Task<IActionResult> Delete(int Id)
         {
-            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoDetalleAsync(Id);
 
             if (proyectoDetalle == null)
             {
@@ -131,16 +111,16 @@ namespace PROIV_PROYECTO.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int _proyectoId)
+        public async Task<IActionResult> DeleteConfirmed(int Id)
         {
-            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(_proyectoId);
+            var proyectoDetalle = await proyectoService.ObtenerProyectoIdAsync(Id);
 
             if (proyectoDetalle == null)
             {
                 return View("Error");
             }
 
-            await proyectoService.BorrarProyectoAsync(_proyectoId);
+            await proyectoService.BorrarProyectoAsync(Id);
             return RedirectToAction(nameof(Index));
         }
     }

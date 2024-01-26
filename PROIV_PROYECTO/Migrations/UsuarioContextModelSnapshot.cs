@@ -10,8 +10,8 @@ using PROIV_PROYECTO.Contexts;
 
 namespace PROIV_PROYECTO.Migrations
 {
-    [DbContext(typeof(ProyectoContext))]
-    partial class ProyectoContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(UsuarioContext))]
+    partial class UsuarioContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -135,7 +135,54 @@ namespace PROIV_PROYECTO.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("PROIV_PROYECTO.Models.ApplicationUser", b =>
+            modelBuilder.Entity("PROIV_PROYECTO.Models.Permiso", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ad376a8f-9eab-4bb9-9fca-30b01540f445",
+                            Name = "Administrador",
+                            NormalizedName = "ADMINISTRADOR"
+                        },
+                        new
+                        {
+                            Id = "025cf266-88a7-4882-8f23-4f3ad58c916c",
+                            Name = "Gestor",
+                            NormalizedName = "GESTOR"
+                        },
+                        new
+                        {
+                            Id = "3fb4fa0c-453f-4a46-a3a9-9d67d09e3ae4",
+                            Name = "Usuario",
+                            NormalizedName = "USUARIO"
+                        });
+                });
+
+            modelBuilder.Entity("PROIV_PROYECTO.Models.Usuario", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -146,11 +193,6 @@ namespace PROIV_PROYECTO.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -210,16 +252,12 @@ namespace PROIV_PROYECTO.Migrations
 
                     b.ToTable("AspNetUsers", (string)null);
 
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
-
                     b.HasData(
                         new
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e40cd91a-8173-4aba-aaab-4b90f12f6890",
+                            ConcurrencyStamp = "a57b47c1-56a2-4b23-9a34-be126834cd1c",
                             Email = "admin@correo.com",
                             EmailConfirmed = true,
                             FullName = "Usuario Administrador",
@@ -227,177 +265,12 @@ namespace PROIV_PROYECTO.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@CORREO.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL+guuoLX2iXNMBNOXxpjbO3Yrs8znqR4WzBnPBuSSIIE9jyLguASp3MWksPidyhDQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENxHpENaPLQqtmai511piVgZBnHnb61D0WzEgF/UKbZfHEuV3Z6yJZRFLwCz8pulKQ==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Estado", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("NombreEstado")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Estados");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            NombreEstado = "Completado"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            NombreEstado = "Cancelado"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            NombreEstado = "Retrasado"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            NombreEstado = "En Proceso"
-                        });
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Permiso", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex")
-                        .HasFilter("[NormalizedName] IS NOT NULL");
-
-                    b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "ad376a8f-9eab-4bb9-9fca-30b01540f445",
-                            Name = "Administrador",
-                            NormalizedName = "ADMINISTRADOR"
-                        },
-                        new
-                        {
-                            Id = "765c5a43-6927-4017-a9ef-b7a9d7a25594",
-                            Name = "Gestor",
-                            NormalizedName = "GESTOR"
-                        },
-                        new
-                        {
-                            Id = "902313ba-d2c1-460f-aa44-c71febaea08a",
-                            Name = "Usuario",
-                            NormalizedName = "USUARIO"
-                        });
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Proyecto", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FechaInicio")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EstadoId");
-
-                    b.ToTable("Proyectos");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Tarea", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Descripcion")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EstadoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ProyectoId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EstadoId");
-
-                    b.HasIndex("ProyectoId");
-
-                    b.ToTable("Tareas");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.TareaUsuario", b =>
-                {
-                    b.Property<string>("UsuarioId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("TareaId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UsuarioId", "TareaId");
-
-                    b.HasIndex("TareaId");
-
-                    b.ToTable("TareasUsuarios");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Usuario", b =>
-                {
-                    b.HasBaseType("PROIV_PROYECTO.Models.ApplicationUser");
-
-                    b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator().HasValue("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -411,7 +284,7 @@ namespace PROIV_PROYECTO.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("PROIV_PROYECTO.Models.ApplicationUser", null)
+                    b.HasOne("PROIV_PROYECTO.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -420,7 +293,7 @@ namespace PROIV_PROYECTO.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("PROIV_PROYECTO.Models.ApplicationUser", null)
+                    b.HasOne("PROIV_PROYECTO.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -435,7 +308,7 @@ namespace PROIV_PROYECTO.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PROIV_PROYECTO.Models.ApplicationUser", null)
+                    b.HasOne("PROIV_PROYECTO.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -444,75 +317,11 @@ namespace PROIV_PROYECTO.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("PROIV_PROYECTO.Models.ApplicationUser", null)
+                    b.HasOne("PROIV_PROYECTO.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Proyecto", b =>
-                {
-                    b.HasOne("PROIV_PROYECTO.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Estado");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Tarea", b =>
-                {
-                    b.HasOne("PROIV_PROYECTO.Models.Estado", "Estado")
-                        .WithMany()
-                        .HasForeignKey("EstadoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PROIV_PROYECTO.Models.Proyecto", "Proyecto")
-                        .WithMany("Tareas")
-                        .HasForeignKey("ProyectoId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Estado");
-
-                    b.Navigation("Proyecto");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.TareaUsuario", b =>
-                {
-                    b.HasOne("PROIV_PROYECTO.Models.Tarea", "Tarea")
-                        .WithMany("TareasUsuarios")
-                        .HasForeignKey("TareaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PROIV_PROYECTO.Models.Usuario", "Usuario")
-                        .WithMany("TareasUsuarios")
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Tarea");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Proyecto", b =>
-                {
-                    b.Navigation("Tareas");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Tarea", b =>
-                {
-                    b.Navigation("TareasUsuarios");
-                });
-
-            modelBuilder.Entity("PROIV_PROYECTO.Models.Usuario", b =>
-                {
-                    b.Navigation("TareasUsuarios");
                 });
 #pragma warning restore 612, 618
         }

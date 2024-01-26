@@ -12,20 +12,20 @@ namespace PROIV_PROYECTO.Services
         public readonly UserManager<Usuario> userManager;
         public readonly RoleManager<Permiso> roleManager;
         public readonly SignInManager<Usuario> signInManager;
-        public readonly ProyectoContext proyectoContext;
+        public readonly UsuarioContext usuarioContext;
 
-        public UsuarioService(UserManager<Usuario> _userManager, RoleManager<Permiso> _roleManager, SignInManager<Usuario> _signInManager, ProyectoContext _proyectoContext)
+        public UsuarioService(UserManager<Usuario> _userManager, RoleManager<Permiso> _roleManager, SignInManager<Usuario> _signInManager, UsuarioContext _usuarioContext)
         {
             userManager = _userManager;
             roleManager = _roleManager;
             signInManager = _signInManager;
-            proyectoContext = _proyectoContext;
+            usuarioContext = _usuarioContext;
         }
         
         // Obtener todos los usuarios para index
         public async Task<IEnumerable<UsuarioListaDTO>> ObtenerUsuario(string _filtrar, string _textoBusqueda)
         {
-            IEnumerable<Usuario> listaUsuario = await proyectoContext.Usuarios.ToListAsync();
+            IEnumerable<Usuario> listaUsuario = await usuarioContext.Usuarios.ToListAsync();
 
             IEnumerable<UsuarioListaDTO> usuarioDTO = listaUsuario.Select(p => new UsuarioListaDTO
             {
@@ -41,9 +41,9 @@ namespace PROIV_PROYECTO.Services
             /*
             if (_filtrar == "Nombre")
             {
-                var result2 = proyectoContext.Users
-                    .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                    .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                     .ToList()
                     .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
                     {
@@ -59,9 +59,9 @@ namespace PROIV_PROYECTO.Services
             }
             else if (_filtrar == "Cedula")
             {
-                var result2 = proyectoContext.Users
-                    .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                    .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                     .ToList()
                     .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
                     {
@@ -77,9 +77,9 @@ namespace PROIV_PROYECTO.Services
             }
             else if (_filtrar == "Permisos")
             {
-                var result2 = proyectoContext.Users
-                    .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                    .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                     .ToList()
                     .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
                     {
@@ -95,9 +95,9 @@ namespace PROIV_PROYECTO.Services
             }
             else
             {
-                var result2 = proyectoContext.Users
-                    .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                    .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+                var result2 = usuarioContext.Users
+                    .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                    .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                     .ToList()
                     .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioListaDTO()
                     {
@@ -156,7 +156,7 @@ namespace PROIV_PROYECTO.Services
             }
 
             // Se busca el rol al cual se quiere ligar el usuario nuevo
-            var roleName = proyectoContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
+            var roleName = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
             // Se agregar el usuario y el rol en la tabla relacional AspNetUserRoles
             if (await roleManager.RoleExistsAsync(roleName!.Name!))
@@ -173,9 +173,9 @@ namespace PROIV_PROYECTO.Services
         // Obtener Id de Usuarios
         public UsuarioDTO ObtenerUsuarioId(string _usuarioId)
         {
-            var result2 = proyectoContext.Users
-                .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+            var result2 = usuarioContext.Users
+                .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                 .ToList()
                 .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioDTO()
                 {
@@ -192,9 +192,9 @@ namespace PROIV_PROYECTO.Services
 
         public UsuarioDTO ObtenerUsuarioBorrarId(string _usuarioId)
         {
-            var result2 = proyectoContext.Users
-                .Join(proyectoContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
-                .Join(proyectoContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
+            var result2 = usuarioContext.Users
+                .Join(usuarioContext.UserRoles, u => u.Id, ur => ur.UserId, (u, ur) => new { u, ur })
+                .Join(usuarioContext.Roles, ur => ur.ur.RoleId, r => r.Id, (ur, r) => new { ur, r })
                 .ToList()
                 .GroupBy(uv => new { uv.ur.u.Id, uv.ur.u.IdNumber, uv.ur.u.FullName, uv.ur.u.UserName, uv.ur.u.Email }).Select(r => new UsuarioDTO()
                 {
@@ -214,7 +214,7 @@ namespace PROIV_PROYECTO.Services
         {
             var response = new UsuarioDropdownDTO()
             {
-                Permisos = proyectoContext.Roles.OrderBy(n => n.Name).ToList(),
+                Permisos = usuarioContext.Roles.OrderBy(n => n.Name).ToList(),
             };
 
             return response;
@@ -231,7 +231,7 @@ namespace PROIV_PROYECTO.Services
                 await userManager.RemoveFromRoleAsync(usuarioEncontrado!, permisoEncontrado.FirstOrDefault()!);
             }
 
-            var permisoNombre = proyectoContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
+            var permisoNombre = usuarioContext.Roles.Where(r => r.Id == _usuarioDTO.Role).FirstOrDefault();
 
             if (await roleManager.RoleExistsAsync(permisoNombre!.Name!))
             {
@@ -245,8 +245,8 @@ namespace PROIV_PROYECTO.Services
             usuarioEncontrado.FullName = _usuarioDTO.FullName;
             usuarioEncontrado.IdNumber = _usuarioDTO.IdNumber;
             
-            proyectoContext.Update(usuarioEncontrado);
-            proyectoContext.SaveChanges();
+            usuarioContext.Update(usuarioEncontrado);
+            usuarioContext.SaveChanges();
         }
 
         public async Task BorrarUsuario(UsuarioDTO _usuarioDTO)
@@ -256,8 +256,8 @@ namespace PROIV_PROYECTO.Services
 
             await userManager.RemoveFromRoleAsync(usuarioEncontrado!, permisoEncontrado.FirstOrDefault()!);
             
-            proyectoContext.Remove(usuarioEncontrado);
-            proyectoContext.SaveChanges();
+            usuarioContext.Remove(usuarioEncontrado);
+            usuarioContext.SaveChanges();
         }
     }
 }

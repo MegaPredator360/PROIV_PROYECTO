@@ -2,6 +2,8 @@
 using PROIV_PROYECTO.Contexts;
 using PROIV_PROYECTO.Models;
 using PROIV_PROYECTO.Interface;
+using PROIV_PROYECTO.ModelsDTO.ProyectoDTO;
+using System.Collections.Generic;
 using PROIV_PROYECTO.ModelsDTO;
 
 namespace PROIV_PROYECTO.Services
@@ -15,7 +17,7 @@ namespace PROIV_PROYECTO.Services
             proyectoContext = _proyectoContext;
         }
 
-        public async Task NuevoProyectoAsync(ProyectoDTO _proyectoDTO)
+        public async Task NuevoProyectoAsync(ProyectoFormularioDTO _proyectoDTO)
         {
             // Se convierten los datos del modelo de ProyectoFormularioDTO a Proyecto
             var nuevoProyecto = new Proyecto()
@@ -45,31 +47,47 @@ namespace PROIV_PROYECTO.Services
             await proyectoContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<ProyectoListaDTO>> ObtenerProyectosAsync(string _filtrar, string _textoBusqueda)
+        public async Task<IEnumerable<ProyectoListaDTO>> ObtenerProyectosAsync(string _nombreProyecto, int _estadoId)
         {
-            IEnumerable<Proyecto> listaProyectos = await proyectoContext.Proyectos.ToListAsync();
+            IEnumerable<Proyecto> listaProyectos = await proyectoContext.Proyectos
+                .Include(e => e.Estado)
+                // Filtrará por nombre de proyecto
+                .Where(p => (_nombreProyecto == null ? true : p.Nombre!.Contains(_nombreProyecto)))
+                // Si _estadoId es igual a 0, el filtro es ignorado, pero si es diferennte de 0, filtrará por estado
+                .Where(p => (_estadoId == 0 ? true : p.EstadoId == _estadoId))
+                .ToListAsync();
 
             IEnumerable<ProyectoListaDTO> proyectosDTO = listaProyectos.Select(p => new ProyectoListaDTO
             {
                 Id = p.Id,
                 Nombre = p.Nombre,
                 FechaInicio = p.FechaInicio,
-                NombreEstado = p.EstadoId.ToString(),
+                EstadoId = p.EstadoId,
+                EstadoDTOs = new EstadoDTO
+                {
+                    Id = p.Estado.Id,
+                    NombreEstado = p.Estado.NombreEstado
+                },
                 TareasAsignadas = 0
             }).ToList();
 
             return proyectosDTO;
         }
 
-        public async Task<ProyectoDTO> ObtenerProyectoIdAsync(int _proyectoId)
+        public async Task<ProyectoFormularioDTO> ObtenerProyectoIdAsync(int _proyectoId)
         {
             // Buscamos el proyecto
             var proyectoEncontrado = await proyectoContext.Proyectos
                 .Include(e => e.Estado)
                 .FirstOrDefaultAsync(p => p.Id == _proyectoId);
 
-            // Lo convertimos a ProyectoDTO
-            var proyectoDTO = new ProyectoDTO()
+            // Si el proyecto regresa nulo, retornaremos un dato nulo para que en la interface cargue una pantalla de error
+            if (proyectoEncontrado == null)
+            {
+                return null!;
+            }
+
+            var proyectoDTO = new ProyectoFormularioDTO()
             {
                 Id = proyectoEncontrado!.Id,
                 Nombre = proyectoEncontrado.Nombre,
@@ -81,16 +99,49 @@ namespace PROIV_PROYECTO.Services
             return proyectoDTO;
         }
 
-        public async Task<IList<ProyectoDetalleDTO>> ObtenerProyectoDetalleAsync(int _proyectoId)
+        public async Task<ProyectoDetalleDTO> ObtenerProyectoDetalleAsync(int _proyectoId)
         {
-            var result = await proyectoContext.Proyectos.FromSqlRaw("SELECT P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado AS ProyectoEstado, T.Id as IdTarea, T.Nombre as TareaNombre, E.NombreEstado AS TareaEstado, COUNT(UT.UsuarioId) AS PersonasAsignadas FROM Proyectos AS P JOIN Tareas AS T ON P.Id = T.ProyectoId JOIN Estados AS PE ON P.EstadoId = PE.Id JOIN Estados AS E ON T.EstadoId = E.Id JOIN TareasUsuarios AS UT ON T.Id = UT.TareaId WHERE P.Id = " + _proyectoId + " GROUP BY P.Id, P.Nombre, P.Descripcion, P.FechaInicio, PE.NombreEstado, T.Id, T.Nombre, E.NombreEstado").ToListAsync();
-            
-            IList<ProyectoDetalleDTO> tareaListaDTOs = result.ConvertAll(x => (ProyectoDetalleDTO)x);
+            // Buscamos el proyecto
+            var proyectoEncontrado = await proyectoContext.Proyectos
+                .Include(e => e.Estado)
+                .FirstOrDefaultAsync(p => p.Id == _proyectoId);
 
-            return tareaListaDTOs;
+            if (proyectoEncontrado == null)
+            {
+                return null!;
+            }
+
+            IEnumerable<Tarea> listaTareas = await proyectoContext.Tareas.Where(p => p.ProyectoId == _proyectoId).ToListAsync();
+
+            IEnumerable<TareaListaDTO> tareaDTO = listaTareas.Select(p => new TareaListaDTO
+            {
+                Id = p.Id,
+                Nombre = p.Nombre,
+                NombreEstado = p.EstadoId.ToString(),
+                NombreProyecto = "N/A",
+                PersonasAsignadas = 0
+            }).ToList();
+
+            // Lo convertimos a ProyectoDTO
+            var proyectoDTO = new ProyectoDetalleDTO()
+            {
+                Id = proyectoEncontrado!.Id,
+                Nombre = proyectoEncontrado.Nombre,
+                Descripcion = proyectoEncontrado.Descripcion,
+                FechaInicio = proyectoEncontrado.FechaInicio,
+                EstadoId = proyectoEncontrado.EstadoId,
+                EstadoDTOs = new EstadoDTO
+                {
+                    Id = proyectoEncontrado.Estado.Id,
+                    NombreEstado = proyectoEncontrado.Estado.NombreEstado
+                },
+                Tareas = tareaDTO
+            };
+
+            return proyectoDTO;
         }
 
-        public async Task ActualizarProyectoAsync(int _proyectoId, ProyectoDTO _proyectoDTO)
+        public async Task ActualizarProyectoAsync(int _proyectoId, ProyectoFormularioDTO _proyectoDTO)
         {
             var dbProyecto = await proyectoContext.Proyectos.FirstOrDefaultAsync(n => n.Id == _proyectoDTO.Id);
 

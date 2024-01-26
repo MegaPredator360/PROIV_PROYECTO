@@ -1,4 +1,4 @@
-﻿@model ProyectoDTO
+﻿@model ProyectoDetalleDTO
 @{
     ViewData["Title"] = "Borrar Proyecto";
 }
@@ -33,7 +33,7 @@
                     </div>
                     <h3>Estado:</h3>
                     <div class="group-agregar">
-                        <input type="text" class="input-text" asp-controller="Estado" asp-action="Details" asp-route-id="@Model.EstadoId" value="@Model.Estado.NombreEstado" readonly>
+                        <input type="text" class="input-text" asp-controller="Estado" asp-action="Details" asp-route-id="@Model.EstadoId" value="@Model.EstadoDTOs!.NombreEstado" readonly>
                         <span class="highlight"></span>
                         <span class="bar"></span>
                     </div>
